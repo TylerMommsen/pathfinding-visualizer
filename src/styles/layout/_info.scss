@@ -1,0 +1,45 @@
+#info {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background-color: $secondary;
+	padding: 1rem;
+
+	.node-colors-info {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: 3rem;
+
+		.node-info-item {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			gap: 0.5rem;
+
+			& > div {
+				height: 20px;
+				width: 20px;
+			}
+
+			#info-wall {
+				background-color: $wallNode;
+			}
+			#info-visited {
+				background-color: $visitedNode;
+			}
+			#info-unvisited {
+				background-color: $unvisitedNode;
+			}
+			#info-path {
+				background-color: $pathNode;
+			}
+			#info-start {
+				background-color: $startNode;
+			}
+			#info-end {
+				background-color: $endNode;
+			}
+		}
+	}
+}

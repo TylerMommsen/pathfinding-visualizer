@@ -2,7 +2,7 @@
 @import './layout/header';
 @import './layout/footer';
 @import './layout/main';
-@import './layout/selections';
+@import './layout/info';
 
 * {
 	box-sizing: border-box;
@@ -12,6 +12,7 @@
 
 html,
 body {
+	height: 100vh;
 	max-width: 100vw;
 	max-height: 100vh;
 	overflow: hidden;

@@ -1,3 +1,19 @@
 #main {
 	flex-grow: 1;
+	width: 100%;
+	display: grid;
+	place-items: center;
+
+	#grid {
+		display: grid;
+		place-items: center;
+
+		grid-template-columns: repeat(90, 1fr);
+
+		.grid-node {
+			border: 1px solid $grid-line-color;
+			height: 20px;
+			width: 20px;
+		}
+	}
 }
