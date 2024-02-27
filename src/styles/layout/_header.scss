@@ -1,0 +1,33 @@
+#header {
+	display: flex;
+	place-items: center;
+	position: relative;
+	padding: 1rem;
+	background-color: $tertiary;
+
+	#selections {
+		position: absolute;
+		left: 50%;
+		top: 50%;
+		transform: translate(-50%, -50%);
+
+		display: flex;
+		gap: 3rem;
+
+		button {
+			background-color: transparent;
+			color: $primary;
+			border: none;
+			font-size: 1rem;
+		}
+
+		#visualize-btn {
+			font-weight: bold;
+		}
+	}
+
+	h1 {
+		color: $primary;
+		font-size: 1.4rem;
+	}
+}

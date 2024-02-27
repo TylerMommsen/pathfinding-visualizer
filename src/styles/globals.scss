@@ -1,0 +1,24 @@
+@import './variables';
+@import './layout/header';
+@import './layout/footer';
+@import './layout/main';
+@import './layout/selections';
+
+* {
+	box-sizing: border-box;
+	padding: 0;
+	margin: 0;
+}
+
+html,
+body {
+	max-width: 100vw;
+	max-height: 100vh;
+	overflow: hidden;
+}
+
+body {
+	background-color: $primary;
+	display: flex;
+	flex-direction: column;
+}
