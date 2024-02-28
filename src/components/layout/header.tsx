@@ -6,6 +6,7 @@ export default function Header() {
 		<header id="header">
 			<h1>Pathfinding Visualizer</h1>
 			<Selections />
+			<p id="help-btn">Help!</p>
 		</header>
 	);
 }

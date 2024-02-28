@@ -11,9 +11,30 @@
 		grid-template-columns: repeat(90, 1fr);
 
 		.grid-node {
-			border: 1px solid $grid-line-color;
-			height: 20px;
-			width: 20px;
+			outline: 1px solid $grid-line-color;
+			height: 1vw;
+			width: 1vw;
+			cursor: pointer;
+		}
+
+		.start-node {
+			background-color: $start-node;
+		}
+		.end-node {
+			background-color: $end-node;
+		}
+		.wall-node {
+			background-color: $wall-node;
+		}
+
+		.temp-start-node {
+			z-index: 100;
+			background-color: $start-node;
+		}
+
+		.temp-end-node {
+			z-index: 100;
+			background-color: $end-node;
 		}
 	}
 }

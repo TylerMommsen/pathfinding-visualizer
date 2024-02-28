@@ -1,16 +1,16 @@
 #header {
-	display: flex;
+	display: grid;
+	grid-template-columns: auto 1fr auto;
+	gap: 3rem;
 	place-items: center;
-	position: relative;
-	padding: 1rem;
+	padding-right: 3rem;
+	padding-left: 3rem;
+	padding-top: 1rem;
+	padding-bottom: 1rem;
 	background-color: $tertiary;
+	color: $primary;
 
 	#selections {
-		position: absolute;
-		left: 50%;
-		top: 50%;
-		transform: translate(-50%, -50%);
-
 		display: flex;
 		gap: 3rem;
 
@@ -29,5 +29,9 @@
 	h1 {
 		color: $primary;
 		font-size: 1.4rem;
+	}
+
+	#help-btn {
+		justify-self: end;
 	}
 }

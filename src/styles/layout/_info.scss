@@ -23,22 +23,22 @@
 			}
 
 			#info-wall {
-				background-color: $wallNode;
+				background-color: $wall-node;
 			}
 			#info-visited {
-				background-color: $visitedNode;
+				background-color: $visited-node;
 			}
 			#info-unvisited {
-				background-color: $unvisitedNode;
+				background-color: $unvisited-node;
 			}
 			#info-path {
-				background-color: $pathNode;
+				background-color: $path-node;
 			}
 			#info-start {
-				background-color: $startNode;
+				background-color: $start-node;
 			}
 			#info-end {
-				background-color: $endNode;
+				background-color: $end-node;
 			}
 		}
 	}
