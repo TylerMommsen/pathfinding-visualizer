@@ -1,3 +1,15 @@
+@keyframes popIn {
+	0% {
+		transform: scale(0);
+	}
+	50% {
+		transform: scale(1.1);
+	}
+	100% {
+		transform: scale(1);
+	}
+}
+
 #main {
 	flex-grow: 1;
 	width: 100%;
@@ -15,6 +27,7 @@
 			height: 1vw;
 			width: 1vw;
 			cursor: pointer;
+			transition: all 0.2 ease;
 		}
 
 		.start-node {
@@ -23,18 +36,31 @@
 		.end-node {
 			background-color: $end-node;
 		}
+		.path-node {
+			background-color: $path-node;
+		}
+		.open-set-node {
+			background-color: $open-node;
+		}
+		.closed-set-node {
+			background-color: $closed-node;
+		}
+
 		.wall-node {
 			background-color: $wall-node;
+			animation: popIn 0.2s ease-out;
 		}
 
 		.temp-start-node {
 			z-index: 100;
 			background-color: $start-node;
+			animation: popIn 0.2s ease-out;
 		}
 
 		.temp-end-node {
 			z-index: 100;
 			background-color: $end-node;
+			animation: popIn 0.2s ease-out;
 		}
 	}
 }

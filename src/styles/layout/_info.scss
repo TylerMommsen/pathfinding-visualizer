@@ -26,10 +26,10 @@
 				background-color: $wall-node;
 			}
 			#info-visited {
-				background-color: $visited-node;
+				background-color: $open-node;
 			}
 			#info-unvisited {
-				background-color: $unvisited-node;
+				background-color: $closed-node;
 			}
 			#info-path {
 				background-color: $path-node;

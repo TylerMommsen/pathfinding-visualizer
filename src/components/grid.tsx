@@ -1,27 +1,67 @@
 'use client';
+import { useSelections } from '@/contexts/SelectionsContext';
 import { createNode } from '@/models/createNode';
-import { useState } from 'react';
+import aStar from '@/utils/algorithms/astar';
+import { useEffect, useState } from 'react';
 import React from 'react';
 
 const GRID_WIDTH = 90;
 const GRID_HEIGHT = 40;
-const START_NODE_IDX = 0;
-const END_NODE_IDX = GRID_WIDTH * GRID_HEIGHT - 1;
+const START_NODE_IDX = Math.floor((GRID_WIDTH * GRID_HEIGHT - 1) / 2 - 70);
+const END_NODE_IDX = Math.floor((GRID_WIDTH * GRID_HEIGHT - 1) / 2);
+
+const addNeighbors = (grid: any, gridWidth: any, gridHeight: any) => {
+	for (let y = 0; y < gridHeight; y++) {
+		for (let x = 0; x < gridWidth; x++) {
+			const node = grid[y * gridWidth + x];
+			node.neighbors = getNeighbors(x, y, gridWidth, gridHeight, grid);
+		}
+	}
+};
+
+const getNeighbors = (x: any, y: any, gridWidth: any, gridHeight: any, grid: any) => {
+	const neighbors = [];
+	// Up
+	if (y > 0) neighbors.push(grid[(y - 1) * gridWidth + x]);
+	// Down
+	if (y < gridHeight - 1) neighbors.push(grid[(y + 1) * gridWidth + x]);
+	// Left
+	if (x > 0) neighbors.push(grid[y * gridWidth + (x - 1)]);
+	// Right
+	if (x < gridWidth - 1) neighbors.push(grid[y * gridWidth + (x + 1)]);
+	return neighbors;
+};
 
 export default function Grid() {
-	const [grid, setGrid] = useState(
-		Array.from({ length: GRID_WIDTH * GRID_HEIGHT }, (_, index) => {
-			const node = createNode(index);
+	const [grid, setGrid] = useState(() => {
+		const initialGrid = Array.from({ length: GRID_WIDTH * GRID_HEIGHT }, (_, index) => {
+			const x = index % GRID_WIDTH;
+			const y = Math.floor(index / GRID_HEIGHT);
+			const node = createNode(index, x, y);
 			node.isStart = index === START_NODE_IDX;
 			node.isEnd = index === END_NODE_IDX;
 			node.isWall = false;
+			node.isOpenSet = false;
+			node.isClosedSet = false;
+			node.isPath = false;
 			return node;
-		})
-	);
+		});
+		addNeighbors(initialGrid, GRID_WIDTH, GRID_HEIGHT);
+		return initialGrid;
+	});
 	const [isMouseDown, setIsMouseDown] = useState(false); // checks if user is clicking or dragging mouse
 	const [mouseButton, setMouseButton] = useState<number>(1); // checks if left clicking or right clicking
 	const [draggingNode, setDraggingNode] = useState<'start' | 'end' | null>(null); // checks if user is dragging start or end node
 	const [temporaryNode, setTemporaryNode] = useState<number | null>(null); // used to visualize dragging start/end node
+
+	const { start } = useSelections();
+
+	useEffect(() => {
+		if (start) {
+			aStar(grid[START_NODE_IDX], grid[END_NODE_IDX], grid, setGrid);
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [start]);
 
 	const handleMouseDown = (nodeId: number, event: React.MouseEvent<HTMLDivElement>) => {
 		event.preventDefault(); // Prevent the default context menu
@@ -106,11 +146,14 @@ export default function Grid() {
 				<div
 					key={node.id}
 					className={`grid-node 
-					${node.isEnd && draggingNode !== 'end' ? 'end-node' : null} 
-					${node.isStart && draggingNode !== 'start' ? 'start-node' : null}
+					${node.isEnd && draggingNode !== 'end' ? 'end-node' : ''} 
+					${node.isStart && draggingNode !== 'start' ? 'start-node' : ''}
 					${node.isWall ? 'wall-node' : ''} 
-					${temporaryNode === index && draggingNode === 'start' ? 'temp-start-node' : null}
-					${temporaryNode === index && draggingNode === 'end' ? 'temp-end-node' : null}`}
+					${node.isOpenSet ? 'open-set-node' : ''} 
+					${node.isClosedSet ? 'closed-set-node' : ''} 
+					${node.isPath ? 'path-node' : ''} 
+					${temporaryNode === index && draggingNode === 'start' ? 'temp-start-node' : ''}
+					${temporaryNode === index && draggingNode === 'end' ? 'temp-end-node' : ''}`}
 					onMouseDown={(event) => handleMouseDown(node.id, event)}
 					onMouseEnter={() => handleMouseEnter(node.id)}
 				></div>

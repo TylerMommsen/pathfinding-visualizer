@@ -1,8 +1,20 @@
-export const createNode = (id: number) => ({
+export const createNode = (id: number, x: number, y: number, neighbors = []) => ({
 	id,
-	neighbors: [],
+	neighbors,
+
 	isWall: false,
 	isStart: false,
 	isEnd: false,
-	previousNode: undefined,
+	previousNode: null,
+	isOpenSet: false,
+	isClosedSet: false,
+	isPath: false,
+
+	x,
+	y,
+	gCost: Infinity,
+	hCost: 0,
+	fCost: function () {
+		return this.gCost + this.hCost;
+	},
 });

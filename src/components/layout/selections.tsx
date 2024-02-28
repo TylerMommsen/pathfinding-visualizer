@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function Selections() {
+export default function Selections({ start, setStart }: any) {
 	return (
 		<div id="selections">
 			<button>Select Algorithm</button>
@@ -9,7 +9,9 @@ export default function Selections() {
 			<button>Maze Speed</button>
 			<button>Path Speed</button>
 			<button>Reset</button>
-			<button id="visualize-btn">Start!</button>
+			<button id="visualize-btn" onClick={() => setStart(!start)}>
+				Start!
+			</button>
 		</div>
 	);
 }
