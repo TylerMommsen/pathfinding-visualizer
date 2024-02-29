@@ -1,9 +1,11 @@
 import manhattanDistance from '../manhattanDistance';
+import createPriorityQueue from '../priorityQueue';
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 export default async function aStar(startNode: any, endNode: any, grid: any, setGrid: any) {
 	let trackedGrid = [...grid];
+
 	const updateGrid = async (nodeToChange: any, type: string) => {
 		const newGrid = trackedGrid.map((node: any, index: number) => {
 			if (index === nodeToChange.id) {
@@ -30,54 +32,62 @@ export default async function aStar(startNode: any, endNode: any, grid: any, set
 			}
 			return node;
 		});
-		await sleep(1);
 
 		setGrid(newGrid);
 		trackedGrid = [...newGrid];
 	};
 
+	// display final path
 	async function reconstructPath(endNode: any) {
 		const path = [];
 		let currentNode = endNode;
-		while (currentNode !== undefined && currentNode !== null) {
-			await updateGrid(currentNode, 'path');
+		while (currentNode !== null) {
 			path.unshift(currentNode);
 			currentNode = currentNode.previousNode;
 		}
-		console.log(path);
+
+		for (const node of path) {
+			await sleep(1);
+			await updateGrid(node, 'path');
+		}
 		return path;
 	}
 
-	const openSet: any = []; // Consider using a priority queue for performance
-	openSet.push(startNode);
+	const openSet = createPriorityQueue(); // priority queue to efficiently get lowest f score nodes
+	const inOpenSet = new Set(); // used to track if nodes are in the openset or not
 	startNode.gCost = 0;
 	startNode.hCost = manhattanDistance(startNode, endNode);
+	startNode.fCost = startNode.gCost + startNode.hCost;
+	openSet.enqueue(startNode, startNode.fCost);
+	inOpenSet.add(startNode.id);
 
-	while (openSet.length > 0) {
-		// Find the node in openSet with the lowest fCost
-		let currentNode = openSet.reduce((prev: any, curr: any) =>
-			prev.fCost() < curr.fCost() ? prev : curr
-		);
+	while (!openSet.isEmpty()) {
+		await sleep(1);
+
+		// get node in openSet with the lowest fCost
+		let currentNode = openSet.dequeue();
+		inOpenSet.delete(currentNode.id);
 
 		// If we've reached the end, backtrack to find the path
-		if (currentNode === endNode) {
-			console.log('found end node');
+		if (currentNode.x === endNode.x && currentNode.y === endNode.y) {
 			reconstructPath(endNode);
 			return;
 		}
 
-		openSet.splice(openSet.indexOf(currentNode), 1); // Remove currentNode from openSet
 		await updateGrid(currentNode, 'closed');
-		for (const neighbor of currentNode.neighbors) {
-			if (neighbor.isWall) return; // Skip walls
 
-			const tentativeGCost = currentNode.gCost + 1; // Assume cost between neighbors is 1
-			if (tentativeGCost < neighbor.gCost) {
+		for (const neighbor of currentNode.neighbors) {
+			const tentativeGCost = currentNode.gCost + 1; // cost between neighbors
+			if (tentativeGCost < neighbor.gCost || neighbor.gCost === null) {
 				neighbor.previousNode = currentNode;
 				neighbor.gCost = tentativeGCost;
 				neighbor.hCost = manhattanDistance(neighbor, endNode);
-				if (!openSet.includes(neighbor)) {
-					openSet.push(neighbor);
+				neighbor.fCost = neighbor.gCost + neighbor.hCost;
+
+				// add neighbor to openset if it's not already in it and if it's not a wall
+				if (!inOpenSet.has(neighbor.id) && !neighbor.isWall) {
+					openSet.enqueue(neighbor, neighbor.fCost);
+					inOpenSet.add(neighbor.id);
 					await updateGrid(neighbor, 'open');
 				}
 			}

@@ -7,8 +7,6 @@ import React from 'react';
 
 const GRID_WIDTH = 90;
 const GRID_HEIGHT = 40;
-const START_NODE_IDX = Math.floor((GRID_WIDTH * GRID_HEIGHT - 1) / 2 - 70);
-const END_NODE_IDX = Math.floor((GRID_WIDTH * GRID_HEIGHT - 1) / 2);
 
 const addNeighbors = (grid: any, gridWidth: any, gridHeight: any) => {
 	for (let y = 0; y < gridHeight; y++) {
@@ -33,17 +31,17 @@ const getNeighbors = (x: any, y: any, gridWidth: any, gridHeight: any, grid: any
 };
 
 export default function Grid() {
+	const [startNodeIdx, setStartNodeIdx] = useState(
+		Math.floor((GRID_WIDTH * GRID_HEIGHT - 1) / 2 - 70)
+	);
+	const [endNodeIdx, setEndNodeIdx] = useState(Math.floor((GRID_WIDTH * GRID_HEIGHT - 1) / 2 - 19));
 	const [grid, setGrid] = useState(() => {
 		const initialGrid = Array.from({ length: GRID_WIDTH * GRID_HEIGHT }, (_, index) => {
 			const x = index % GRID_WIDTH;
 			const y = Math.floor(index / GRID_HEIGHT);
 			const node = createNode(index, x, y);
-			node.isStart = index === START_NODE_IDX;
-			node.isEnd = index === END_NODE_IDX;
-			node.isWall = false;
-			node.isOpenSet = false;
-			node.isClosedSet = false;
-			node.isPath = false;
+			node.isStart = index === startNodeIdx;
+			node.isEnd = index === endNodeIdx;
 			return node;
 		});
 		addNeighbors(initialGrid, GRID_WIDTH, GRID_HEIGHT);
@@ -58,7 +56,7 @@ export default function Grid() {
 
 	useEffect(() => {
 		if (start) {
-			aStar(grid[START_NODE_IDX], grid[END_NODE_IDX], grid, setGrid);
+			aStar(grid[startNodeIdx], grid[endNodeIdx], grid, setGrid);
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [start]);
@@ -95,7 +93,11 @@ export default function Grid() {
 	const handleMouseUp = () => {
 		if (draggingNode && temporaryNode !== null) {
 			const newGrid = grid.map((node, index) => {
+				// wherever the temp node is, make that the new start/end node
 				if (index === temporaryNode) {
+					draggingNode === 'start' ? setStartNodeIdx(index) : null;
+					draggingNode === 'end' ? setEndNodeIdx(index) : null;
+
 					return {
 						...node,
 						isStart: draggingNode === 'start',
@@ -103,14 +105,18 @@ export default function Grid() {
 						isWall: false,
 					};
 				}
+				// clear original position of start node to be empty
 				if (draggingNode === 'start' && node.isStart) {
 					return { ...node, isStart: false };
 				}
+				// clear original position of end node to be empty
 				if (draggingNode === 'end' && node.isEnd) {
 					return { ...node, isEnd: false };
 				}
 				return node;
 			});
+			addNeighbors(newGrid, GRID_WIDTH, GRID_HEIGHT);
+
 			setGrid(newGrid);
 		}
 
@@ -127,6 +133,8 @@ export default function Grid() {
 			}
 			return node;
 		});
+		addNeighbors(newGrid, GRID_WIDTH, GRID_HEIGHT);
+
 		setGrid(newGrid);
 	};
 
