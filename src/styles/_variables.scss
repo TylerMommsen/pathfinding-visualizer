@@ -1,15 +1,16 @@
-$background: #d1d1d1;
-$grid-line-color: rgba(0, 0, 0, 0.4);
+$background: #ffffff;
+$grid-line-color: rgba(0, 0, 0, 0.2);
 
 $primary: #fff;
-$secondary: #c8c8c8;
+$secondary: #2d2d2d;
 $accent: #1ca0ff;
 $tertiary: #26324c;
+$tertiary2: rgba(47, 63, 95, 0.8);
 
-$unvisited-node: #fff;
-$closed-node: #ff1c1c;
-$wall-node: #1b1b1b;
-$path-node: #e8ff1c;
-$open-node: #1cff6b;
-$start-node: #ff1c8e;
-$end-node: #331cff;
+$empty: #fafafa;
+$closed-node: #ff4949;
+$wall-node: #292929;
+$path-node: #efff5e;
+$open-node: #56ff91;
+$start-node: #ff54aa;
+$end-node: #6f5fff;

@@ -1,8 +1,10 @@
 #info {
 	display: flex;
+	flex-direction: column;
 	align-items: center;
 	justify-content: center;
-	background-color: $secondary;
+	gap: 1rem;
+	color: $secondary;
 	padding: 1rem;
 
 	.node-colors-info {
@@ -20,16 +22,17 @@
 			& > div {
 				height: 20px;
 				width: 20px;
+				border: 1px solid $grid-line-color;
 			}
 
 			#info-wall {
 				background-color: $wall-node;
 			}
 			#info-visited {
-				background-color: $open-node;
+				background-color: $closed-node;
 			}
 			#info-unvisited {
-				background-color: $closed-node;
+				background-color: $empty;
 			}
 			#info-path {
 				background-color: $path-node;

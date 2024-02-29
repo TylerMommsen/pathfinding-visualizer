@@ -29,6 +29,7 @@ export default function Info() {
 					<p>- End</p>
 				</div>
 			</div>
+			<p>Algorithm Selected: A*</p>
 		</section>
 	);
 }

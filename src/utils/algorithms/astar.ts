@@ -62,7 +62,7 @@ export default async function aStar(startNode: any, endNode: any, grid: any, set
 	inOpenSet.add(startNode.id);
 
 	while (!openSet.isEmpty()) {
-		await sleep(1);
+		await sleep(0.1);
 
 		// get node in openSet with the lowest fCost
 		let currentNode = openSet.dequeue();
