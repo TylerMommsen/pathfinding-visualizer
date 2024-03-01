@@ -52,7 +52,7 @@ export default async function aStar(startNode: any, endNode: any, grid: any, set
 			await sleep(1);
 			await updateGrid(node, 'path');
 		}
-		return path;
+		return;
 	}
 
 	const openSet = createPriorityQueue(); // priority queue to efficiently get lowest f score nodes
@@ -72,8 +72,8 @@ export default async function aStar(startNode: any, endNode: any, grid: any, set
 
 		// If we've reached the end, backtrack to find the path
 		if (currentNode.x === endNode.x && currentNode.y === endNode.y) {
-			reconstructPath(endNode);
-			return;
+			await reconstructPath(endNode);
+			return true;
 		}
 
 		await updateGrid(currentNode, 'closed');
@@ -95,4 +95,7 @@ export default async function aStar(startNode: any, endNode: any, grid: any, set
 			}
 		}
 	}
+
+	// path not found
+	return true;
 }

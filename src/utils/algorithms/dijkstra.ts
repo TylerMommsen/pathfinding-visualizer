@@ -66,8 +66,8 @@ export default async function dijkstra(startNode: any, endNode: any, grid: any, 
 
 		// If we've reached the end, backtrack to find the path
 		if (currentNode.x === endNode.x && currentNode.y === endNode.y) {
-			reconstructPath(endNode);
-			return;
+			await reconstructPath(endNode);
+			return true;
 		}
 
 		for (const neighbor of currentNode.neighbors) {
@@ -86,4 +86,7 @@ export default async function dijkstra(startNode: any, endNode: any, grid: any, 
 			}
 		}
 	}
+
+	// path not found
+	return true;
 }

@@ -54,15 +54,8 @@
 			animation: popIn 0.2s ease-out;
 		}
 
-		.temp-start-node {
+		.temp-node {
 			z-index: 100;
-			background-color: $start-node;
-			animation: popIn 0.2s ease-out;
-		}
-
-		.temp-end-node {
-			z-index: 100;
-			background-color: $end-node;
 			animation: popIn 0.2s ease-out;
 		}
 	}

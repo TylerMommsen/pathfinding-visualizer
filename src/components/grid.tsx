@@ -4,6 +4,7 @@ import { createNode } from '@/models/createNode';
 import aStar from '@/utils/algorithms/astar';
 import bidirectional from '@/utils/algorithms/bidirectional';
 import dijkstra from '@/utils/algorithms/dijkstra';
+import recursivedivision from '@/utils/mazes/recursivedivision';
 import { useEffect, useState } from 'react';
 import React from 'react';
 
@@ -40,7 +41,7 @@ export default function Grid() {
 	const [grid, setGrid] = useState(() => {
 		const initialGrid = Array.from({ length: GRID_WIDTH * GRID_HEIGHT }, (_, index) => {
 			const x = index % GRID_WIDTH;
-			const y = Math.floor(index / GRID_HEIGHT);
+			const y = Math.floor(index / GRID_WIDTH);
 			const node = createNode(index, x, y);
 			node.isStart = index === startNodeIdx;
 			node.isEnd = index === endNodeIdx;
@@ -54,8 +55,17 @@ export default function Grid() {
 	const [draggingNode, setDraggingNode] = useState<'start' | 'end' | null>(null); // checks if user is dragging start or end node
 	const [temporaryNode, setTemporaryNode] = useState<number | null>(null); // used to visualize dragging start/end node
 
-	const { start, setStart, selections, resetClicked, setResetClicked, clearPaths, setClearPaths } =
-		useSelections();
+	const {
+		start,
+		setStart,
+		selections,
+		resetClicked,
+		setResetClicked,
+		clearPaths,
+		setClearPaths,
+		algorithmRunning,
+		setAlgorithmRunning,
+	} = useSelections();
 
 	const resetFullGrid = () => {
 		const newGrid = grid.map((node, index) => {
@@ -95,21 +105,29 @@ export default function Grid() {
 	};
 
 	useEffect(() => {
-		if (start) {
-			if (selections.selectalgorithm === 'A*') {
-				console.log('running');
-				aStar(grid[startNodeIdx], grid[endNodeIdx], grid, setGrid);
+		const runAlgorithm = async () => {
+			if (start && selections.selectalgorithm) {
+				let done = false;
+				setAlgorithmRunning(true);
+
+				if (selections.selectalgorithm === 'A*') {
+					done = await aStar(grid[startNodeIdx], grid[endNodeIdx], grid, setGrid);
+				} else if (selections.selectalgorithm === 'Dijkstra') {
+					done = await dijkstra(grid[startNodeIdx], grid[endNodeIdx], grid, setGrid);
+				} else if (selections.selectalgorithm === 'Bidirectional') {
+					done = await bidirectional(grid[startNodeIdx], grid[endNodeIdx], grid, setGrid);
+				}
+
+				if (done) {
+					console.log('finished');
+					setAlgorithmRunning(false);
+					setStart(false);
+				}
 			}
-			if (selections.selectalgorithm === 'Dijkstra') {
-				console.log('running');
-				dijkstra(grid[startNodeIdx], grid[endNodeIdx], grid, setGrid);
-			}
-			if (selections.selectalgorithm === 'Bidirectional') {
-				console.log('running');
-				bidirectional(grid[startNodeIdx], grid[endNodeIdx], grid, setGrid);
-			}
-			setStart(false);
-		}
+		};
+
+		runAlgorithm();
+
 		if (resetClicked) {
 			resetFullGrid();
 		}
@@ -118,6 +136,13 @@ export default function Grid() {
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [start, resetClicked, clearPaths]);
+
+	useEffect(() => {
+		if (selections.selectmaze === 'Recursive Division') {
+			recursivedivision(grid, setGrid);
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [selections.selectmaze]);
 
 	const handleMouseDown = (nodeId: number, event: React.MouseEvent<HTMLDivElement>) => {
 		event.preventDefault(); // Prevent the default context menu
@@ -212,17 +237,73 @@ export default function Grid() {
 				<div
 					key={node.id}
 					className={`grid-node 
-					${node.isEnd && draggingNode !== 'end' ? 'end-node' : ''} 
-					${node.isStart && draggingNode !== 'start' ? 'start-node' : ''}
 					${node.isWall ? 'wall-node' : ''} 
 					${node.isOpenSet ? 'open-set-node' : ''} 
 					${node.isClosedSet ? 'closed-set-node' : ''} 
 					${node.isPath ? 'path-node' : ''} 
-					${temporaryNode === index && draggingNode === 'start' ? 'temp-start-node' : ''}
-					${temporaryNode === index && draggingNode === 'end' ? 'temp-end-node' : ''}`}
+					${temporaryNode === index && draggingNode === 'start' ? 'temp-node' : ''}
+					${temporaryNode === index && draggingNode === 'end' ? 'temp-node' : ''}`}
 					onMouseDown={(event) => handleMouseDown(node.id, event)}
 					onMouseEnter={() => handleMouseEnter(node.id)}
-				></div>
+				>
+					{(node.isStart && draggingNode !== 'start') ||
+					(temporaryNode === index && draggingNode === 'start') ? (
+						<>
+							<svg
+								fill="#000000"
+								viewBox="0 0 1920 1920"
+								xmlns="http://www.w3.org/2000/svg"
+								transform="matrix(-1, 0, 0, 1, 0, 0)"
+							>
+								<g id="SVGRepo_bgCarrier" strokeWidth="1"></g>
+								<g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"></g>
+								<g id="SVGRepo_iconCarrier">
+									{' '}
+									<path
+										d="m1394.006 0 92.299 92.168-867.636 867.767 867.636 867.636-92.299 92.429-959.935-960.065z"
+										fillRule="evenodd"
+									></path>{' '}
+								</g>
+							</svg>
+						</>
+					) : null}
+					{(node.isEnd && draggingNode !== 'end') ||
+					(temporaryNode === index && draggingNode === 'end') ? (
+						<>
+							<svg
+								viewBox="0 0 20 20"
+								version="1.1"
+								xmlns="http://www.w3.org/2000/svg"
+								fill="#000000"
+							>
+								<g id="SVGRepo_bgCarrier" strokeWidth="0"></g>
+								<g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"></g>
+								<g id="SVGRepo_iconCarrier">
+									{' '}
+									<g id="Page-1" stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
+										{' '}
+										<g
+											id="Dribbble-Light-Preview"
+											transform="translate(-220.000000, -7759.000000)"
+											fill="#000000"
+										>
+											{' '}
+											<g id="icons" transform="translate(56.000000, 160.000000)">
+												{' '}
+												<path
+													d="M174,7611 L178,7611 L178,7607 L174,7607 L174,7611 Z M170,7607 L174,7607 L174,7603 L170,7603 L170,7607 Z M174,7603 L178,7603 L178,7599 L174,7599 L174,7603 Z M182,7599 L182,7603 L178,7603 L178,7607 L182,7607 L182,7619 L184,7619 L184,7599 L182,7599 Z M166,7607 L170,7607 L170,7611 L166,7611 L166,7619 L164,7619 L164,7599 L170,7599 L170,7603 L166,7603 L166,7607 Z"
+													id="finish_line-[#104]"
+												>
+													{' '}
+												</path>{' '}
+											</g>{' '}
+										</g>{' '}
+									</g>{' '}
+								</g>
+							</svg>
+						</>
+					) : null}
+				</div>
 			))}
 		</div>
 	);

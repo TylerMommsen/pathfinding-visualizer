@@ -90,8 +90,8 @@ export default async function bidirectional(startNode: any, endNode: any, grid: 
 			if (visitedForwards.has(neighbor)) continue;
 
 			if (visitedBackwards.has(neighbor) || backwardsQ.includes(neighbor)) {
-				reconstructPath(currentNode, neighbor);
-				return;
+				await reconstructPath(currentNode, neighbor);
+				return true;
 			}
 
 			const tentativeGCost = currentNode.gCost + 1; // cost between neighbors
@@ -131,4 +131,7 @@ export default async function bidirectional(startNode: any, endNode: any, grid: 
 			}
 		}
 	}
+
+	// path not found
+	return true;
 }

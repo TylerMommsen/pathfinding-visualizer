@@ -20,9 +20,17 @@ const selectionContents: SelectionContentsType = {
 
 type SelectionName = keyof SelectionContentsType;
 
-export default function Selections({ start, setStart }: any) {
+export default function Selections() {
 	const [visibleDropdown, setVisibleDropdown] = useState<string | null>(null);
-	const { selections, setSelections, setResetClicked, setClearPaths } = useSelections();
+	const {
+		selections,
+		setSelections,
+		setResetClicked,
+		setClearPaths,
+		algorithmRunning,
+		setAlgorithmRunning,
+		setStart,
+	} = useSelections();
 
 	const toggleDropdown = (selection: string | null) => {
 		setVisibleDropdown(visibleDropdown === selection ? null : selection);
@@ -76,8 +84,14 @@ export default function Selections({ start, setStart }: any) {
 				<button className="selection-item">Clear Paths</button>
 			</div>
 
-			<button id="visualize-btn" onClick={() => setStart(true)}>
-				Start!
+			<button
+				id="visualize-btn"
+				onClick={() => {
+					if (!algorithmRunning) setStart(true);
+				}}
+				style={algorithmRunning ? { opacity: '0.8' } : {}}
+			>
+				{algorithmRunning ? 'Running...' : 'Start!'}
 			</button>
 		</div>
 	);

@@ -19,6 +19,7 @@ export function SelectionsProvider({ children }: SelectionsContextProvider) {
 	const [resetClicked, setResetClicked] = useState(false);
 	const [clearPaths, setClearPaths] = useState(false);
 	const [start, setStart] = useState(false);
+	const [algorithmRunning, setAlgorithmRunning] = useState(false);
 
 	return (
 		<SelectionsContext.Provider
@@ -31,6 +32,8 @@ export function SelectionsProvider({ children }: SelectionsContextProvider) {
 				setResetClicked,
 				clearPaths,
 				setClearPaths,
+				algorithmRunning,
+				setAlgorithmRunning,
 			}}
 		>
 			{children}
