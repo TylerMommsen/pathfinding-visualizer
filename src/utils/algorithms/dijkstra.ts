@@ -60,7 +60,6 @@ export default async function dijkstra(startNode: any, endNode: any, grid: any, 
 	while (openSetQ.length > 0) {
 		await sleep(0.1);
 
-		// get node in openSet with the lowest fCost
 		let currentNode = openSetQ.shift();
 		closedSet.add(currentNode);
 		await updateGrid(currentNode, 'closed');
@@ -79,7 +78,7 @@ export default async function dijkstra(startNode: any, endNode: any, grid: any, 
 				neighbor.previousNode = currentNode;
 				neighbor.gCost = tentativeGCost;
 
-				// add neighbor to openset if it's not already in it and if it's not a wall
+				// add neighbor to queue if it's not already in it and if it's not a wall
 				if (!openSetQ.includes(neighbor) && !neighbor.isWall) {
 					openSetQ.push(neighbor);
 					await updateGrid(neighbor, 'open');

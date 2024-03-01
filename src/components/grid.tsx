@@ -2,6 +2,7 @@
 import { useSelections } from '@/contexts/SelectionsContext';
 import { createNode } from '@/models/createNode';
 import aStar from '@/utils/algorithms/astar';
+import bidirectional from '@/utils/algorithms/bidirectional';
 import dijkstra from '@/utils/algorithms/dijkstra';
 import { useEffect, useState } from 'react';
 import React from 'react';
@@ -102,6 +103,10 @@ export default function Grid() {
 			if (selections.selectalgorithm === 'Dijkstra') {
 				console.log('running');
 				dijkstra(grid[startNodeIdx], grid[endNodeIdx], grid, setGrid);
+			}
+			if (selections.selectalgorithm === 'Bidirectional') {
+				console.log('running');
+				bidirectional(grid[startNodeIdx], grid[endNodeIdx], grid, setGrid);
 			}
 			setStart(false);
 		}
