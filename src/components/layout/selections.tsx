@@ -1,38 +1,57 @@
 'use client';
 import React, { useState } from 'react';
+import { useSelections } from '@/contexts/SelectionsContext';
 
-const selections = ['Select Algorithm', 'Select Maze', 'Grid Size', 'Maze Speed', 'Path Speed'];
+type SelectionContentsType = {
+	'Select Algorithm': string[];
+	'Select Maze': string[];
+	'Grid Size': string[];
+	'Maze Speed': string[];
+	'Path Speed': string[];
+};
 
-const SelectAlgorithmContent = ['A*', 'Dijkstra', 'Bidirectional'];
-const SelectMazeContent = [
-	'Recursive Division',
-	'Binary Tree',
-	'Sidewinder',
-	"Prim's",
-	'Hunt And Kill',
-];
-const GridSizeContent = ['Small', 'Large'];
-const MazeSpeedContent = ['Slow', 'Normal', 'Fast'];
-const PathSpeedContent = ['Slow', 'Normal', 'Fast'];
+const selectionContents: SelectionContentsType = {
+	'Select Algorithm': ['A*', 'Dijkstra', 'Bidirectional'],
+	'Select Maze': ['Recursive Division', 'Binary Tree', 'Sidewinder', "Prim's", 'Hunt And Kill'],
+	'Grid Size': ['Small', 'Large'],
+	'Maze Speed': ['Slow', 'Normal', 'Fast'],
+	'Path Speed': ['Slow', 'Normal', 'Fast'],
+};
+
+type SelectionName = keyof SelectionContentsType;
 
 export default function Selections({ start, setStart }: any) {
-	const [visibleDropdown, setVisibleDropdown] = useState<number | null>(null);
+	const [visibleDropdown, setVisibleDropdown] = useState<string | null>(null);
+	const { selections, setSelections, setResetClicked, setClearPaths } = useSelections();
 
-	const toggleDropdown = (index: number) => {
-		setVisibleDropdown(visibleDropdown === index ? null : index);
+	const toggleDropdown = (selection: string | null) => {
+		setVisibleDropdown(visibleDropdown === selection ? null : selection);
 	};
 
-	const dropdownContent = (selection: string) => {
-		let content = null;
-		if (selection === 'Select Algorithm') content = SelectAlgorithmContent;
-		if (selection === 'Select Maze') content = SelectMazeContent;
-		if (selection === 'Grid Size') content = GridSizeContent;
-		if (selection === 'Maze Speed') content = MazeSpeedContent;
-		if (selection === 'Path Speed') content = PathSpeedContent;
+	const updateSelectionsContext = (selectionName: string, selection: string) => {
+		// Convert selection name to state key format
+		const stateKey = selectionName.toLowerCase().replace(' ', '');
+		console.log(stateKey, selection);
+		setSelections({ ...selections, [stateKey]: selection });
+		toggleDropdown(null); // Close dropdown after selection
+	};
+
+	const DropdownContent = ({ selectionName }: { selectionName: SelectionName }) => {
+		const content: string[] = selectionContents[selectionName];
 		return (
 			<div className="drop-down-content">
-				{content?.map((selection, index) => (
-					<button key={index}>{selection}</button>
+				{content.map((option: string, index: number) => (
+					<button
+						key={index}
+						onClick={() => updateSelectionsContext(selectionName, option)}
+						className={
+							selections[selectionName.toLowerCase().replace(' ', '')] === option
+								? 'currently-selected'
+								: ''
+						}
+					>
+						{option}
+					</button>
 				))}
 			</div>
 		);
@@ -40,19 +59,29 @@ export default function Selections({ start, setStart }: any) {
 
 	return (
 		<div id="selections">
-			{selections.map((selection, index) => (
-				<div key={index} onClick={() => toggleDropdown(index)}>
+			{Object.keys(selectionContents).map((selection, index) => (
+				<div key={index} onClick={() => toggleDropdown(selection)}>
 					<span className="down-arrow">&#9660;</span>
 					<button className="selection-item">{selection}</button>
-					{visibleDropdown === index && dropdownContent(selection)}
+					{visibleDropdown === selection && (
+						<DropdownContent selectionName={selection as SelectionName} />
+					)}
 				</div>
 			))}
 
 			<div>
-				<button className="selection-item">Reset</button>
+				<button className="selection-item" onClick={() => setResetClicked(true)}>
+					Reset
+				</button>
 			</div>
 
-			<button id="visualize-btn" onClick={() => setStart(!start)}>
+			<div>
+				<button className="selection-item" onClick={() => setClearPaths(true)}>
+					Clear Paths
+				</button>
+			</div>
+
+			<button id="visualize-btn" onClick={() => setStart(true)}>
 				Start!
 			</button>
 		</div>

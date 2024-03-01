@@ -7,6 +7,8 @@ export default async function aStar(startNode: any, endNode: any, grid: any, set
 	let trackedGrid = [...grid];
 
 	const updateGrid = async (nodeToChange: any, type: string) => {
+		if (nodeToChange.isStart || nodeToChange.isEnd) return;
+
 		const newGrid = trackedGrid.map((node: any, index: number) => {
 			if (index === nodeToChange.id) {
 				if (type === 'open') {

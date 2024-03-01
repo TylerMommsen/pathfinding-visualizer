@@ -1,6 +1,9 @@
-import React from 'react';
+'use client';
+import { useSelections } from '@/contexts/SelectionsContext';
 
 export default function Info() {
+	const { selections } = useSelections();
+
 	return (
 		<section id="info">
 			<div className="node-colors-info">
@@ -29,7 +32,7 @@ export default function Info() {
 					<p>- End</p>
 				</div>
 			</div>
-			<p>Algorithm Selected: A*</p>
+			<p>Algorithm Selected: {selections.selectalgorithm ? selections.selectalgorithm : 'None'}</p>
 		</section>
 	);
 }

@@ -9,20 +9,32 @@ const SelectionsContext = createContext<any>(null);
 
 export function SelectionsProvider({ children }: SelectionsContextProvider) {
 	const [selections, setSelections] = useState<any>({
-		algorithm: null,
-		maze: null,
-		gridSize: null,
-		mazeSpeed: null,
-		pathSpeed: null,
+		selectalgorithm: '',
+		selectmaze: '',
+		gridsize: 'Large',
+		mazespeed: 'Normal',
+		pathspeed: 'Normal',
 	});
 
 	const [resetClicked, setResetClicked] = useState(false);
+	const [clearPaths, setClearPaths] = useState(false);
 	const [start, setStart] = useState(false);
 
-	const value = { selections, setSelections, resetClicked, setResetClicked, start, setStart };
-
 	return (
-		<SelectionsContext.Provider value={{ start, setStart }}>{children}</SelectionsContext.Provider>
+		<SelectionsContext.Provider
+			value={{
+				start,
+				setStart,
+				selections,
+				setSelections,
+				resetClicked,
+				setResetClicked,
+				clearPaths,
+				setClearPaths,
+			}}
+		>
+			{children}
+		</SelectionsContext.Provider>
 	);
 }
 

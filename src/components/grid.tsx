@@ -52,14 +52,62 @@ export default function Grid() {
 	const [draggingNode, setDraggingNode] = useState<'start' | 'end' | null>(null); // checks if user is dragging start or end node
 	const [temporaryNode, setTemporaryNode] = useState<number | null>(null); // used to visualize dragging start/end node
 
-	const { start } = useSelections();
+	const { start, setStart, selections, resetClicked, setResetClicked, clearPaths, setClearPaths } =
+		useSelections();
+
+	const resetFullGrid = () => {
+		const newGrid = grid.map((node, index) => {
+			return {
+				...node,
+				isPath: false,
+				isOpenSet: false,
+				isClosedSet: false,
+				isWall: false,
+				previousNode: null,
+				gCost: Infinity,
+				hCost: 0,
+				neighbors: [],
+			};
+		});
+		addNeighbors(newGrid, GRID_WIDTH, GRID_HEIGHT);
+		setGrid(newGrid);
+		setResetClicked(false);
+	};
+
+	const resetPaths = () => {
+		const newGrid = grid.map((node, index) => {
+			return {
+				...node,
+				isPath: false,
+				isOpenSet: false,
+				isClosedSet: false,
+				previousNode: null,
+				gCost: Infinity,
+				hCost: 0,
+				neighbors: [],
+			};
+		});
+		addNeighbors(newGrid, GRID_WIDTH, GRID_HEIGHT);
+		setGrid(newGrid);
+		setClearPaths(false);
+	};
 
 	useEffect(() => {
 		if (start) {
-			aStar(grid[startNodeIdx], grid[endNodeIdx], grid, setGrid);
+			if (selections.selectalgorithm === 'A*') {
+				console.log('running');
+				aStar(grid[startNodeIdx], grid[endNodeIdx], grid, setGrid);
+			}
+			setStart(false);
+		}
+		if (resetClicked) {
+			resetFullGrid();
+		}
+		if (clearPaths) {
+			resetPaths();
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [start]);
+	}, [start, resetClicked, clearPaths]);
 
 	const handleMouseDown = (nodeId: number, event: React.MouseEvent<HTMLDivElement>) => {
 		event.preventDefault(); // Prevent the default context menu

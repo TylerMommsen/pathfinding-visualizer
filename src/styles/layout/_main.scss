@@ -15,11 +15,11 @@
 	width: 100%;
 	display: grid;
 	place-items: center;
+	align-items: start;
 	background-color: $background;
 
 	#grid {
 		display: grid;
-		place-items: center;
 
 		grid-template-columns: repeat(90, 1fr);
 		box-shadow: 5px 5px 5px rgba($color: #000000, $alpha: 0.1);

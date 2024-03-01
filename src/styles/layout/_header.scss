@@ -77,10 +77,15 @@
 				padding: 1rem;
 				white-space: nowrap;
 				transition: all 0.1s;
+				cursor: pointer;
 
 				&:hover {
 					background-color: $accent;
 				}
+			}
+
+			.currently-selected {
+				background-color: $accent;
 			}
 		}
 	}
