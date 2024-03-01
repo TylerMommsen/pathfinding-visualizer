@@ -36,6 +36,7 @@
 			flex-direction: row-reverse;
 			padding-top: 1rem;
 			padding-bottom: 1rem;
+			cursor: pointer;
 
 			&:hover > .selection-item {
 				text-decoration: underline;

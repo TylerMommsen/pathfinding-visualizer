@@ -2,6 +2,7 @@
 import { useSelections } from '@/contexts/SelectionsContext';
 import { createNode } from '@/models/createNode';
 import aStar from '@/utils/algorithms/astar';
+import dijkstra from '@/utils/algorithms/dijkstra';
 import { useEffect, useState } from 'react';
 import React from 'react';
 
@@ -97,6 +98,10 @@ export default function Grid() {
 			if (selections.selectalgorithm === 'A*') {
 				console.log('running');
 				aStar(grid[startNodeIdx], grid[endNodeIdx], grid, setGrid);
+			}
+			if (selections.selectalgorithm === 'Dijkstra') {
+				console.log('running');
+				dijkstra(grid[startNodeIdx], grid[endNodeIdx], grid, setGrid);
 			}
 			setStart(false);
 		}

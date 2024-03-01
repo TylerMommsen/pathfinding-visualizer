@@ -31,7 +31,6 @@ export default function Selections({ start, setStart }: any) {
 	const updateSelectionsContext = (selectionName: string, selection: string) => {
 		// Convert selection name to state key format
 		const stateKey = selectionName.toLowerCase().replace(' ', '');
-		console.log(stateKey, selection);
 		setSelections({ ...selections, [stateKey]: selection });
 		toggleDropdown(null); // Close dropdown after selection
 	};
@@ -69,16 +68,12 @@ export default function Selections({ start, setStart }: any) {
 				</div>
 			))}
 
-			<div>
-				<button className="selection-item" onClick={() => setResetClicked(true)}>
-					Reset
-				</button>
+			<div onClick={() => setResetClicked(true)}>
+				<button className="selection-item">Reset</button>
 			</div>
 
-			<div>
-				<button className="selection-item" onClick={() => setClearPaths(true)}>
-					Clear Paths
-				</button>
+			<div onClick={() => setClearPaths(true)}>
+				<button className="selection-item">Clear Paths</button>
 			</div>
 
 			<button id="visualize-btn" onClick={() => setStart(true)}>
