@@ -1,59 +1,74 @@
 'use client';
 import { useSelections } from '@/contexts/SelectionsContext';
-import { createNode } from '@/models/createNode';
+import createNode from '@/models/createNode';
 import aStar from '@/utils/algorithms/astar';
 import bidirectional from '@/utils/algorithms/bidirectional';
 import dijkstra from '@/utils/algorithms/dijkstra';
+import binarytree from '@/utils/mazes/binarytree';
+import huntandkill from '@/utils/mazes/huntandkill';
+import prims from '@/utils/mazes/prims';
+import randommap from '@/utils/mazes/randommap';
 import recursivedivision from '@/utils/mazes/recursivedivision';
+import sidewinder from '@/utils/mazes/sidewinder';
 import { useEffect, useState } from 'react';
 import React from 'react';
 
-const GRID_WIDTH = 90;
-const GRID_HEIGHT = 40;
-
-const addNeighbors = (grid: any, gridWidth: any, gridHeight: any) => {
-	for (let y = 0; y < gridHeight; y++) {
-		for (let x = 0; x < gridWidth; x++) {
-			const node = grid[y * gridWidth + x];
-			node.neighbors = getNeighbors(x, y, gridWidth, gridHeight, grid);
-		}
-	}
+const GRID_WIDTH = 81;
+const GRID_HEIGHT = 35;
+const defaultStartPos = {
+	x: Math.floor(GRID_WIDTH / 2 - 10),
+	y: Math.floor(GRID_HEIGHT / 2),
+};
+const defaultEndPos = {
+	x: Math.floor(GRID_WIDTH / 2 + 10),
+	y: Math.floor(GRID_HEIGHT / 2),
 };
 
-const getNeighbors = (x: any, y: any, gridWidth: any, gridHeight: any, grid: any) => {
+const getNeighbors = (x: any, y: any, grid: any) => {
 	const neighbors = [];
 	// Up
-	if (y > 0) neighbors.push(grid[(y - 1) * gridWidth + x]);
+	if (y > 0) neighbors.push(grid[y - 1][x]);
 	// Down
-	if (y < gridHeight - 1) neighbors.push(grid[(y + 1) * gridWidth + x]);
+	if (y < GRID_HEIGHT - 1) neighbors.push(grid[y + 1][x]);
 	// Left
-	if (x > 0) neighbors.push(grid[y * gridWidth + (x - 1)]);
+	if (x > 0) neighbors.push(grid[y][x - 1]);
 	// Right
-	if (x < gridWidth - 1) neighbors.push(grid[y * gridWidth + (x + 1)]);
+	if (x < GRID_WIDTH - 1) neighbors.push(grid[y][x + 1]);
+
 	return neighbors;
 };
 
-export default function Grid() {
-	const [startNodeIdx, setStartNodeIdx] = useState(
-		Math.floor((GRID_WIDTH * GRID_HEIGHT - 1) / 2 - 70)
-	);
-	const [endNodeIdx, setEndNodeIdx] = useState(Math.floor((GRID_WIDTH * GRID_HEIGHT - 1) / 2 - 19));
-	const [grid, setGrid] = useState(() => {
-		const initialGrid = Array.from({ length: GRID_WIDTH * GRID_HEIGHT }, (_, index) => {
-			const x = index % GRID_WIDTH;
-			const y = Math.floor(index / GRID_WIDTH);
+const initGrid = (startNodePos: any, endNodePos: any) => {
+	const grid = Array.from({ length: GRID_HEIGHT }, (_, y) =>
+		Array.from({ length: GRID_WIDTH }, (_, x) => {
+			const index = y * GRID_WIDTH + x;
 			const node = createNode(index, x, y);
-			node.isStart = index === startNodeIdx;
-			node.isEnd = index === endNodeIdx;
 			return node;
-		});
-		addNeighbors(initialGrid, GRID_WIDTH, GRID_HEIGHT);
-		return initialGrid;
-	});
+		})
+	);
+
+	grid[startNodePos.y][startNodePos.x].isStart = true;
+	grid[endNodePos.y][endNodePos.x].isEnd = true;
+
+	// Add neighbors
+	grid.forEach((row, y) =>
+		row.forEach((node, x) => {
+			node.neighbors = getNeighbors(x, y, grid);
+		})
+	);
+
+	return grid;
+};
+
+export default function Grid() {
+	const [startNodePos, setStartNodePos] = useState(defaultStartPos);
+	const [endNodePos, setEndNodePos] = useState(defaultEndPos);
+	const [grid, setGrid] = useState(initGrid(startNodePos, endNodePos));
+
 	const [isMouseDown, setIsMouseDown] = useState(false); // checks if user is clicking or dragging mouse
 	const [mouseButton, setMouseButton] = useState<number>(1); // checks if left clicking or right clicking
 	const [draggingNode, setDraggingNode] = useState<'start' | 'end' | null>(null); // checks if user is dragging start or end node
-	const [temporaryNode, setTemporaryNode] = useState<number | null>(null); // used to visualize dragging start/end node
+	const [temporaryNode, setTemporaryNode] = useState<any>({ x: null, y: null }); // used to visualize dragging start/end node
 
 	const {
 		start,
@@ -68,38 +83,56 @@ export default function Grid() {
 	} = useSelections();
 
 	const resetFullGrid = () => {
-		const newGrid = grid.map((node, index) => {
-			return {
-				...node,
-				isPath: false,
-				isOpenSet: false,
-				isClosedSet: false,
-				isWall: false,
-				previousNode: null,
-				gCost: Infinity,
-				hCost: 0,
-				neighbors: [],
-			};
+		let newGrid = grid.map((gridRow: any, rowIndex: number) => {
+			return gridRow.map((node: any, colIndex: number) => {
+				return {
+					...node,
+					isPath: false,
+					isOpenSet: false,
+					isClosedSet: false,
+					isWall: false,
+					previousNode: null,
+					gCost: Infinity,
+					hCost: 0,
+					neighbors: [],
+				};
+			});
 		});
-		addNeighbors(newGrid, GRID_WIDTH, GRID_HEIGHT);
+
+		// Add neighbors
+		newGrid.forEach((row, y) => {
+			row.forEach((node: any, x: number) => {
+				node.neighbors = getNeighbors(x, y, newGrid);
+			});
+		});
+
 		setGrid(newGrid);
 		setResetClicked(false);
 	};
 
 	const resetPaths = () => {
-		const newGrid = grid.map((node, index) => {
-			return {
-				...node,
-				isPath: false,
-				isOpenSet: false,
-				isClosedSet: false,
-				previousNode: null,
-				gCost: Infinity,
-				hCost: 0,
-				neighbors: [],
-			};
+		let newGrid = grid.map((gridRow: any, rowIndex: number) => {
+			return gridRow.map((node: any, colIndex: number) => {
+				return {
+					...node,
+					isPath: false,
+					isOpenSet: false,
+					isClosedSet: false,
+					previousNode: null,
+					gCost: Infinity,
+					hCost: 0,
+					neighbors: [],
+				};
+			});
 		});
-		addNeighbors(newGrid, GRID_WIDTH, GRID_HEIGHT);
+
+		// Add neighbors
+		newGrid.forEach((row, y) => {
+			row.forEach((node: any, x: number) => {
+				node.neighbors = getNeighbors(x, y, newGrid);
+			});
+		});
+
 		setGrid(newGrid);
 		setClearPaths(false);
 	};
@@ -111,15 +144,29 @@ export default function Grid() {
 				setAlgorithmRunning(true);
 
 				if (selections.selectalgorithm === 'A*') {
-					done = await aStar(grid[startNodeIdx], grid[endNodeIdx], grid, setGrid);
+					done = await aStar(
+						grid[startNodePos.y][startNodePos.x],
+						grid[endNodePos.y][endNodePos.x],
+						grid,
+						setGrid
+					);
 				} else if (selections.selectalgorithm === 'Dijkstra') {
-					done = await dijkstra(grid[startNodeIdx], grid[endNodeIdx], grid, setGrid);
+					done = await dijkstra(
+						grid[startNodePos.y][startNodePos.x],
+						grid[endNodePos.y][endNodePos.x],
+						grid,
+						setGrid
+					);
 				} else if (selections.selectalgorithm === 'Bidirectional') {
-					done = await bidirectional(grid[startNodeIdx], grid[endNodeIdx], grid, setGrid);
+					done = await bidirectional(
+						grid[startNodePos.y][startNodePos.x],
+						grid[endNodePos.y][endNodePos.x],
+						grid,
+						setGrid
+					);
 				}
 
 				if (done) {
-					console.log('finished');
 					setAlgorithmRunning(false);
 					setStart(false);
 				}
@@ -139,91 +186,101 @@ export default function Grid() {
 
 	useEffect(() => {
 		if (selections.selectmaze === 'Recursive Division') {
-			recursivedivision(grid, setGrid);
+			recursivedivision(grid, setGrid, GRID_WIDTH, GRID_HEIGHT);
+		}
+		if (selections.selectmaze === 'Binary Tree') {
+			binarytree(grid, setGrid, GRID_WIDTH, GRID_HEIGHT);
+		}
+		if (selections.selectmaze === 'Sidewinder') {
+			sidewinder(grid, setGrid, GRID_WIDTH, GRID_HEIGHT);
+		}
+		if (selections.selectmaze === "Prim's") {
+			prims(grid, setGrid, GRID_WIDTH, GRID_HEIGHT);
+		}
+		if (selections.selectmaze === 'Hunt And Kill') {
+			huntandkill(grid, setGrid, GRID_WIDTH, GRID_HEIGHT);
+		}
+		if (selections.selectmaze === 'Random Map') {
+			randommap(grid, setGrid, GRID_WIDTH, GRID_HEIGHT);
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [selections.selectmaze]);
 
-	const handleMouseDown = (nodeId: number, event: React.MouseEvent<HTMLDivElement>) => {
+	const handleMouseDown = (row: number, col: number, event: React.MouseEvent<HTMLDivElement>) => {
 		event.preventDefault(); // Prevent the default context menu
 		setIsMouseDown(true);
 		setMouseButton(event.button);
 
-		const node = grid[nodeId];
+		const node = grid[row][col];
 		if (node.isStart || node.isEnd) {
 			setDraggingNode(node.isStart ? 'start' : 'end');
-			setTemporaryNode(nodeId);
+			setTemporaryNode({ x: col, y: row });
 		} else {
 			// Regular node handling
-			handleNodeClick(nodeId, event.button);
+			handleNodeClick(row, col, event.button);
 		}
 	};
 
-	const handleMouseEnter = (nodeId: number) => {
+	const handleMouseEnter = (row: number, col: number) => {
 		if (!isMouseDown) return;
 
 		if (!draggingNode) {
-			handleNodeClick(nodeId, mouseButton);
+			handleNodeClick(row, col, mouseButton);
 		} else {
-			if (grid[nodeId].isStart || grid[nodeId].isEnd) {
+			if (grid[row][col].isStart || grid[row][col].isEnd) {
 				return;
 			} else {
-				setTemporaryNode(nodeId);
+				setTemporaryNode({ x: col, y: row });
 			}
 		}
 	};
 
 	const handleMouseUp = () => {
-		if (draggingNode && temporaryNode !== null) {
-			const newGrid = grid.map((node, index) => {
-				// wherever the temp node is, make that the new start/end node
-				if (index === temporaryNode) {
-					draggingNode === 'start' ? setStartNodeIdx(index) : null;
-					draggingNode === 'end' ? setEndNodeIdx(index) : null;
-
-					return {
-						...node,
-						isStart: draggingNode === 'start',
-						isEnd: draggingNode === 'end',
-						isWall: false,
-					};
-				}
-				// clear original position of start node to be empty
-				if (draggingNode === 'start' && node.isStart) {
-					return { ...node, isStart: false };
-				}
-				// clear original position of end node to be empty
-				if (draggingNode === 'end' && node.isEnd) {
-					return { ...node, isEnd: false };
-				}
-				return node;
+		if (draggingNode && temporaryNode.x !== null && temporaryNode.y !== null) {
+			// create a deep copy of the grid
+			const newGrid = grid.map((gridRow, rowIndex) => {
+				return gridRow.map((node, colIndex) => {
+					return node;
+				});
 			});
-			addNeighbors(newGrid, GRID_WIDTH, GRID_HEIGHT);
+
+			// clear original start/end node
+			if (draggingNode === 'start') {
+				newGrid[startNodePos.y][startNodePos.x].isStart = false;
+			} else if (draggingNode === 'end') {
+				newGrid[endNodePos.y][endNodePos.x].isEnd = false;
+			}
+
+			// wherever the temp node is, make that the new start/end node
+			if (draggingNode === 'start') setStartNodePos({ x: temporaryNode.x, y: temporaryNode.y });
+			if (draggingNode === 'end') setEndNodePos({ x: temporaryNode.x, y: temporaryNode.y });
+			newGrid[temporaryNode.y][temporaryNode.x].isStart = draggingNode === 'start';
+			newGrid[temporaryNode.y][temporaryNode.x].isEnd = draggingNode === 'end';
 
 			setGrid(newGrid);
 		}
 
 		setIsMouseDown(false);
 		setDraggingNode(null); // stop dragging the start/end node
-		setTemporaryNode(null); // remove temp node visualization
+		setTemporaryNode({ x: null, y: null }); // remove temp node visualization
 	};
 
 	// place or remove walls
-	const handleNodeClick = (nodeId: number, clickType: number) => {
-		const newGrid = grid.map((node) => {
-			if (node.id === nodeId && !node.isStart && !node.isEnd) {
-				return { ...node, isWall: clickType !== 2 }; // Toggle wall based on click type, except for start/end nodes
-			}
-			return node;
+	const handleNodeClick = (row: number, col: number, clickType: number) => {
+		let newGrid = grid.map((gridRow: any, rowIndex: number) => {
+			return gridRow.map((node: any, colIndex: number) => {
+				return node;
+			});
 		});
-		addNeighbors(newGrid, GRID_WIDTH, GRID_HEIGHT);
+
+		newGrid[row][col].isWall = clickType !== 2;
 
 		setGrid(newGrid);
 	};
 
 	// don't show context menu when user right clicks
 	const handleContextMenu = (event: React.MouseEvent<HTMLDivElement>) => {
-		event.preventDefault(); // Prevent the default context menu
+		event.preventDefault();
 	};
 
 	return (
@@ -233,43 +290,50 @@ export default function Grid() {
 			onMouseUp={handleMouseUp}
 			onContextMenu={handleContextMenu}
 		>
-			{grid.map((node, index) => (
-				<div
-					key={node.id}
-					className={`grid-node 
-					${node.isWall ? 'wall-node' : ''} 
-					${node.isOpenSet ? 'open-set-node' : ''} 
-					${node.isClosedSet ? 'closed-set-node' : ''} 
-					${node.isPath ? 'path-node' : ''} 
-					${temporaryNode === index && draggingNode === 'start' ? 'temp-node' : ''}
-					${temporaryNode === index && draggingNode === 'end' ? 'temp-node' : ''}`}
-					onMouseDown={(event) => handleMouseDown(node.id, event)}
-					onMouseEnter={() => handleMouseEnter(node.id)}
-				>
-					{(node.isStart && draggingNode !== 'start') ||
-					(temporaryNode === index && draggingNode === 'start') ? (
-						<>
+			{grid.map((row, rowIndex) =>
+				row.map((node, colIndex) => (
+					<div
+						key={node.id}
+						className={`grid-node 
+                ${node.isWall ? 'wall-node' : ''} 
+                ${node.isOpenSet ? 'open-set-node' : ''} 
+                ${node.isClosedSet ? 'closed-set-node' : ''} 
+                ${node.isPath ? 'path-node' : ''} 
+                ${
+									temporaryNode.x === node.x &&
+									temporaryNode.y === node.y &&
+									draggingNode === 'start'
+										? 'temp-node'
+										: ''
+								}
+                ${
+									temporaryNode.x === node.x && temporaryNode.y === node.y && draggingNode === 'end'
+										? 'temp-node'
+										: ''
+								}`}
+						onMouseDown={(event) => handleMouseDown(rowIndex, colIndex, event)}
+						onMouseEnter={() => handleMouseEnter(rowIndex, colIndex)}
+					>
+						{(node.isStart && draggingNode !== 'start') ||
+						(temporaryNode.x === node.x &&
+							temporaryNode.y === node.y &&
+							draggingNode === 'start') ? (
+							// SVG for start node
 							<svg
 								fill="#000000"
 								viewBox="0 0 1920 1920"
 								xmlns="http://www.w3.org/2000/svg"
 								transform="matrix(-1, 0, 0, 1, 0, 0)"
 							>
-								<g id="SVGRepo_bgCarrier" strokeWidth="1"></g>
-								<g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"></g>
-								<g id="SVGRepo_iconCarrier">
-									{' '}
-									<path
-										d="m1394.006 0 92.299 92.168-867.636 867.767 867.636 867.636-92.299 92.429-959.935-960.065z"
-										fillRule="evenodd"
-									></path>{' '}
-								</g>
+								<path
+									d="m1394.006 0 92.299 92.168-867.636 867.767 867.636 867.636-92.299 92.429-959.935-960.065z"
+									fillRule="evenodd"
+								></path>
 							</svg>
-						</>
-					) : null}
-					{(node.isEnd && draggingNode !== 'end') ||
-					(temporaryNode === index && draggingNode === 'end') ? (
-						<>
+						) : null}
+						{(node.isEnd && draggingNode !== 'end') ||
+						(temporaryNode.x === node.x && temporaryNode.y === node.y && draggingNode === 'end') ? (
+							// SVG for end node
 							<svg
 								viewBox="0 0 20 20"
 								version="1.1"
@@ -280,6 +344,7 @@ export default function Grid() {
 								<g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"></g>
 								<g id="SVGRepo_iconCarrier">
 									{' '}
+									<title>finish_line [#104]</title> <desc>Created with Sketch.</desc> <defs> </defs>{' '}
 									<g id="Page-1" stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
 										{' '}
 										<g
@@ -301,10 +366,10 @@ export default function Grid() {
 									</g>{' '}
 								</g>
 							</svg>
-						</>
-					) : null}
-				</div>
-			))}
+						) : null}
+					</div>
+				))
+			)}
 		</div>
 	);
 }

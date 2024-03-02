@@ -4,43 +4,33 @@ import createPriorityQueue from '../priorityQueue';
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 export default async function aStar(startNode: any, endNode: any, grid: any, setGrid: any) {
-	let trackedGrid = [...grid];
-
 	const updateGrid = async (nodeToChange: any, type: string) => {
 		if (nodeToChange.isStart || nodeToChange.isEnd) return;
 
-		const newGrid = trackedGrid.map((node: any, index: number) => {
-			if (index === nodeToChange.id) {
-				if (type === 'open') {
-					return {
-						...node,
-						isOpenSet: true,
-						isClosedSet: false,
-					};
-				} else if (type === 'closed') {
-					return {
-						...node,
-						isClosedSet: true,
-						isOpenSet: false,
-					};
-				} else if (type === 'path') {
-					return {
-						...node,
-						isOpenSet: false,
-						isClosedSet: false,
-						isPath: true,
-					};
-				}
-			}
-			return node;
+		let newGrid = grid.map((gridRow: any, rowIndex: number) => {
+			return gridRow.map((node: any, colIndex: number) => {
+				return node;
+			});
 		});
 
+		if (type === 'open') {
+			newGrid[nodeToChange.y][nodeToChange.x].isOpenSet = true;
+			newGrid[nodeToChange.y][nodeToChange.x].isClosedSet = false;
+		} else if (type === 'closed') {
+			newGrid[nodeToChange.y][nodeToChange.x].isOpenSet = false;
+			newGrid[nodeToChange.y][nodeToChange.x].isClosedSet = true;
+		} else if (type === 'path') {
+			newGrid[nodeToChange.y][nodeToChange.x].isOpenSet = false;
+			newGrid[nodeToChange.y][nodeToChange.x].isClosedSet = false;
+			newGrid[nodeToChange.y][nodeToChange.x].isPath = true;
+		}
+
 		setGrid(newGrid);
-		trackedGrid = [...newGrid];
 	};
 
 	// display final path
 	async function reconstructPath(endNode: any) {
+		console.log('found');
 		const path = [];
 		let currentNode = endNode;
 		while (currentNode !== null) {
@@ -64,7 +54,7 @@ export default async function aStar(startNode: any, endNode: any, grid: any, set
 	inOpenSet.add(startNode.id);
 
 	while (!openSet.isEmpty()) {
-		await sleep(0.1);
+		await sleep(1);
 
 		// get node in openSet with the lowest fCost
 		let currentNode = openSet.dequeue();

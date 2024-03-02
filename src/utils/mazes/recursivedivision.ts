@@ -1,20 +1,19 @@
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
-export default async function recursivedivision(grid: any, setGrid: any) {
-	let gridCopy = [...grid];
-
+export default async function recursivedivision(
+	grid: any,
+	setGrid: any,
+	gridWidth: number,
+	gridHeight: number
+) {
 	const updateGrid = (yPos: number, xPos: number) => {
-		const newGrid = gridCopy.map((node, index) => {
-			if (node.x === xPos && node.y === yPos) {
-				return {
-					...node,
-					isWall: true,
-				};
-			}
-			return node;
+		let gridCopy = grid.map((gridRow: any, rowIndex: number) => {
+			return gridRow.map((node: any, colIndex: number) => {
+				return node;
+			});
 		});
-		setGrid(newGrid);
-		gridCopy = [...newGrid];
+		gridCopy[yPos][xPos].isWall = true;
+		setGrid(gridCopy);
 	};
 
 	const randomEven = (a: number, b: number) => {
@@ -45,20 +44,21 @@ export default async function recursivedivision(grid: any, setGrid: any) {
 	};
 
 	// create walls around edges of grid
-	for (const node of grid) {
-		if (node.x === 0 || node.y === 0 || node.x === 89 || node.y === 39) {
-			updateGrid(node.y, node.x);
+	for (let row = 0; row < grid.length; row++) {
+		for (let col = 0; col < grid[0].length; col++) {
+			if (row === 0 || col === 0 || row === grid.length - 1 || col === grid[0].length - 1) {
+				// await sleep(1);
+				updateGrid(row, col);
+			}
 		}
 	}
 
 	// recursive function
 	const divide = async (startRow: number, endRow: number, startCol: number, endCol: number) => {
 		// base case if sub-maze is too small
-		if (endCol - startCol < 1 || endRow - startRow < 1) {
-			console.log('yup');
+		if (endCol - startCol <= 1 || endRow - startRow <= 1) {
 			return;
 		}
-		console.log('recurring');
 
 		// define a spot in between two points of where a wall or col can be made
 		const wallRow = randomEven(startRow + 1, endRow - 1);
@@ -104,7 +104,7 @@ export default async function recursivedivision(grid: any, setGrid: any) {
 		}
 	};
 
-	await divide(1, 38, 1, 88);
+	await divide(1, gridHeight - 2, 1, gridWidth - 2);
 
 	return true;
 }

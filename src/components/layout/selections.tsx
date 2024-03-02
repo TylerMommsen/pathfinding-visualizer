@@ -12,7 +12,14 @@ type SelectionContentsType = {
 
 const selectionContents: SelectionContentsType = {
 	'Select Algorithm': ['A*', 'Dijkstra', 'Bidirectional'],
-	'Select Maze': ['Recursive Division', 'Binary Tree', 'Sidewinder', "Prim's", 'Hunt And Kill'],
+	'Select Maze': [
+		'Recursive Division',
+		'Binary Tree',
+		'Sidewinder',
+		"Prim's",
+		'Hunt And Kill',
+		'Random Map',
+	],
 	'Grid Size': ['Small', 'Large'],
 	'Maze Speed': ['Slow', 'Normal', 'Fast'],
 	'Path Speed': ['Slow', 'Normal', 'Fast'],
