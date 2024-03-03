@@ -10,7 +10,7 @@ import prims from '@/utils/mazes/prims';
 import randommap from '@/utils/mazes/randommap';
 import recursivedivision from '@/utils/mazes/recursivedivision';
 import sidewinder from '@/utils/mazes/sidewinder';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import React from 'react';
 
 const GRID_WIDTH = 81;
@@ -64,6 +64,7 @@ export default function Grid() {
 	const [startNodePos, setStartNodePos] = useState(defaultStartPos);
 	const [endNodePos, setEndNodePos] = useState(defaultEndPos);
 	const [grid, setGrid] = useState(initGrid(startNodePos, endNodePos));
+	const gridNodeRefs = useRef<any>({}); // using refs to improve performance
 
 	const [isMouseDown, setIsMouseDown] = useState(false); // checks if user is clicking or dragging mouse
 	const [mouseButton, setMouseButton] = useState<number>(1); // checks if left clicking or right clicking
@@ -82,64 +83,35 @@ export default function Grid() {
 		setAlgorithmRunning,
 	} = useSelections();
 
-	const resetFullGrid = () => {
-		let newGrid = grid.map((gridRow: any, rowIndex: number) => {
-			return gridRow.map((node: any, colIndex: number) => {
-				return {
-					...node,
-					isPath: false,
-					isOpenSet: false,
-					isClosedSet: false,
-					isWall: false,
-					previousNode: null,
-					gCost: Infinity,
-					hCost: 0,
-					neighbors: [],
-				};
-			});
-		});
+	// remove any paths/visualization from previous algorithms or reset will walls too
+	const resetGrid = (full?: boolean) => {
+		for (let row = 0; row < GRID_HEIGHT; row++) {
+			for (let col = 0; col < GRID_WIDTH; col++) {
+				const node = grid[row][col];
+				node.isPath = false;
+				node.isOpenSet = false;
+				node.isClosedSet = false;
+				node.previousNode = null;
+				node.gCost = Infinity;
+				node.hCost = 0;
+				if (full) node.isWall = false;
 
-		// Add neighbors
-		newGrid.forEach((row, y) => {
-			row.forEach((node: any, x: number) => {
-				node.neighbors = getNeighbors(x, y, newGrid);
-			});
-		});
+				gridNodeRefs.current[node.id].classList.remove('open-set-node');
+				gridNodeRefs.current[node.id].classList.remove('closed-set-node');
+				gridNodeRefs.current[node.id].classList.remove('open-set-node');
+				gridNodeRefs.current[node.id].classList.remove('path-node');
+				if (full) gridNodeRefs.current[node.id].classList.remove('wall-node');
+			}
+		}
 
-		setGrid(newGrid);
-		setResetClicked(false);
-	};
-
-	const resetPaths = () => {
-		let newGrid = grid.map((gridRow: any, rowIndex: number) => {
-			return gridRow.map((node: any, colIndex: number) => {
-				return {
-					...node,
-					isPath: false,
-					isOpenSet: false,
-					isClosedSet: false,
-					previousNode: null,
-					gCost: Infinity,
-					hCost: 0,
-					neighbors: [],
-				};
-			});
-		});
-
-		// Add neighbors
-		newGrid.forEach((row, y) => {
-			row.forEach((node: any, x: number) => {
-				node.neighbors = getNeighbors(x, y, newGrid);
-			});
-		});
-
-		setGrid(newGrid);
-		setClearPaths(false);
+		if (!full) setClearPaths(false); // if only reset paths is clicked
+		if (full) setResetClicked(false); // if a full grid reset is clicked
 	};
 
 	useEffect(() => {
 		const runAlgorithm = async () => {
 			if (start && selections.selectalgorithm) {
+				resetGrid(false);
 				let done = false;
 				setAlgorithmRunning(true);
 
@@ -148,21 +120,21 @@ export default function Grid() {
 						grid[startNodePos.y][startNodePos.x],
 						grid[endNodePos.y][endNodePos.x],
 						grid,
-						setGrid
+						gridNodeRefs
 					);
 				} else if (selections.selectalgorithm === 'Dijkstra') {
 					done = await dijkstra(
 						grid[startNodePos.y][startNodePos.x],
 						grid[endNodePos.y][endNodePos.x],
 						grid,
-						setGrid
+						gridNodeRefs
 					);
 				} else if (selections.selectalgorithm === 'Bidirectional') {
 					done = await bidirectional(
 						grid[startNodePos.y][startNodePos.x],
 						grid[endNodePos.y][endNodePos.x],
 						grid,
-						setGrid
+						gridNodeRefs
 					);
 				}
 
@@ -176,32 +148,33 @@ export default function Grid() {
 		runAlgorithm();
 
 		if (resetClicked) {
-			resetFullGrid();
+			resetGrid(true);
 		}
 		if (clearPaths) {
-			resetPaths();
+			resetGrid(false);
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [start, resetClicked, clearPaths]);
 
 	useEffect(() => {
+		resetGrid(true);
 		if (selections.selectmaze === 'Recursive Division') {
-			recursivedivision(grid, setGrid, GRID_WIDTH, GRID_HEIGHT);
+			recursivedivision(grid, gridNodeRefs, GRID_WIDTH, GRID_HEIGHT);
 		}
 		if (selections.selectmaze === 'Binary Tree') {
-			binarytree(grid, setGrid, GRID_WIDTH, GRID_HEIGHT);
+			binarytree(grid, gridNodeRefs, GRID_WIDTH, GRID_HEIGHT);
 		}
 		if (selections.selectmaze === 'Sidewinder') {
-			sidewinder(grid, setGrid, GRID_WIDTH, GRID_HEIGHT);
+			sidewinder(grid, gridNodeRefs, GRID_WIDTH, GRID_HEIGHT);
 		}
 		if (selections.selectmaze === "Prim's") {
-			prims(grid, setGrid, GRID_WIDTH, GRID_HEIGHT);
+			prims(grid, gridNodeRefs, GRID_WIDTH, GRID_HEIGHT);
 		}
 		if (selections.selectmaze === 'Hunt And Kill') {
-			huntandkill(grid, setGrid, GRID_WIDTH, GRID_HEIGHT);
+			huntandkill(grid, gridNodeRefs, GRID_WIDTH, GRID_HEIGHT);
 		}
 		if (selections.selectmaze === 'Random Map') {
-			randommap(grid, setGrid, GRID_WIDTH, GRID_HEIGHT);
+			randommap(grid, gridNodeRefs, GRID_WIDTH, GRID_HEIGHT);
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [selections.selectmaze]);
@@ -227,7 +200,9 @@ export default function Grid() {
 		if (!draggingNode) {
 			handleNodeClick(row, col, mouseButton);
 		} else {
-			if (grid[row][col].isStart || grid[row][col].isEnd) {
+			if (grid[row][col].isStart && draggingNode === 'end') {
+				return;
+			} else if (grid[row][col].isEnd && draggingNode === 'start') {
 				return;
 			} else {
 				setTemporaryNode({ x: col, y: row });
@@ -237,27 +212,24 @@ export default function Grid() {
 
 	const handleMouseUp = () => {
 		if (draggingNode && temporaryNode.x !== null && temporaryNode.y !== null) {
-			// create a deep copy of the grid
-			const newGrid = grid.map((gridRow, rowIndex) => {
-				return gridRow.map((node, colIndex) => {
-					return node;
-				});
-			});
-
-			// clear original start/end node
 			if (draggingNode === 'start') {
-				newGrid[startNodePos.y][startNodePos.x].isStart = false;
+				grid[startNodePos.y][startNodePos.x].isStart = false; // clear original start node
+
+				// set new start node location
+				setStartNodePos({ x: temporaryNode.x, y: temporaryNode.y });
+				grid[temporaryNode.y][temporaryNode.x].isStart = true;
 			} else if (draggingNode === 'end') {
-				newGrid[endNodePos.y][endNodePos.x].isEnd = false;
+				grid[endNodePos.y][endNodePos.x].isEnd = false; // clear original end node
+
+				// set new end node location
+				setEndNodePos({ x: temporaryNode.x, y: temporaryNode.y });
+				grid[temporaryNode.y][temporaryNode.x].isEnd = true;
+				if (grid[temporaryNode.y][temporaryNode.x].isWall)
+					grid[temporaryNode.y][temporaryNode.x].isWall = false;
 			}
 
-			// wherever the temp node is, make that the new start/end node
-			if (draggingNode === 'start') setStartNodePos({ x: temporaryNode.x, y: temporaryNode.y });
-			if (draggingNode === 'end') setEndNodePos({ x: temporaryNode.x, y: temporaryNode.y });
-			newGrid[temporaryNode.y][temporaryNode.x].isStart = draggingNode === 'start';
-			newGrid[temporaryNode.y][temporaryNode.x].isEnd = draggingNode === 'end';
-
-			setGrid(newGrid);
+			if (grid[temporaryNode.y][temporaryNode.x].isWall)
+				grid[temporaryNode.y][temporaryNode.x].isWall = false;
 		}
 
 		setIsMouseDown(false);
@@ -265,17 +237,22 @@ export default function Grid() {
 		setTemporaryNode({ x: null, y: null }); // remove temp node visualization
 	};
 
-	// place or remove walls
+	// place or remove walls (left/right click)
 	const handleNodeClick = (row: number, col: number, clickType: number) => {
-		let newGrid = grid.map((gridRow: any, rowIndex: number) => {
-			return gridRow.map((node: any, colIndex: number) => {
-				return node;
-			});
-		});
-
-		newGrid[row][col].isWall = clickType !== 2;
-
-		setGrid(newGrid);
+		if (grid[row][col].isStart || grid[row][col].isEnd) return;
+		// using refs to significantly improve performance
+		const nodeRef = gridNodeRefs.current[grid[row][col].id];
+		if (nodeRef) {
+			if (clickType == 0) {
+				grid[row][col].isWall = true;
+				nodeRef.classList.add('wall-node');
+				nodeRef.classList.add('animated');
+			} else if (clickType == 2) {
+				grid[row][col].isWall = false;
+				nodeRef.classList.remove('wall-node');
+				nodeRef.classList.remove('animated');
+			}
+		}
 	};
 
 	// don't show context menu when user right clicks
@@ -294,23 +271,14 @@ export default function Grid() {
 				row.map((node, colIndex) => (
 					<div
 						key={node.id}
-						className={`grid-node 
-                ${node.isWall ? 'wall-node' : ''} 
-                ${node.isOpenSet ? 'open-set-node' : ''} 
-                ${node.isClosedSet ? 'closed-set-node' : ''} 
-                ${node.isPath ? 'path-node' : ''} 
-                ${
-									temporaryNode.x === node.x &&
-									temporaryNode.y === node.y &&
-									draggingNode === 'start'
-										? 'temp-node'
-										: ''
-								}
-                ${
-									temporaryNode.x === node.x && temporaryNode.y === node.y && draggingNode === 'end'
-										? 'temp-node'
-										: ''
-								}`}
+						ref={(el) => (gridNodeRefs.current[node.id] = el)}
+						className={`grid-node ${node.isWall ? 'wall-node' : ''} ${
+							temporaryNode.x === node.x &&
+							temporaryNode.y === node.y &&
+							(draggingNode === 'start' || draggingNode === 'end')
+								? 'animated temp-node'
+								: ''
+						}`}
 						onMouseDown={(event) => handleMouseDown(rowIndex, colIndex, event)}
 						onMouseEnter={() => handleMouseEnter(rowIndex, colIndex)}
 					>

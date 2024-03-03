@@ -1,9 +1,9 @@
 @keyframes popIn {
 	0% {
-		transform: scale(0);
+		transform: scale(1);
 	}
 	50% {
-		transform: scale(1.1);
+		transform: scale(1.2);
 	}
 	100% {
 		transform: scale(1);
@@ -33,14 +33,9 @@
 			transition: all 0.2 ease;
 		}
 
-		.start-node {
-			background-color: $start-node;
-		}
-		.end-node {
-			background-color: $end-node;
-		}
 		.path-node {
 			background-color: $path-node;
+			animation: popIn 0.2s ease-out;
 		}
 		.open-set-node {
 			background-color: $open-node;
@@ -48,15 +43,15 @@
 		.closed-set-node {
 			background-color: $closed-node;
 		}
-
 		.wall-node {
 			background-color: $wall-node;
+		}
+		.animated {
 			animation: popIn 0.2s ease-out;
 		}
-
 		.temp-node {
 			z-index: 100;
-			animation: popIn 0.2s ease-out;
+			background-color: orange;
 		}
 	}
 }

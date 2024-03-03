@@ -2,18 +2,13 @@ const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 export default async function recursivedivision(
 	grid: any,
-	setGrid: any,
+	gridNodeRefs: any,
 	gridWidth: number,
 	gridHeight: number
 ) {
 	const updateGrid = (yPos: number, xPos: number) => {
-		let gridCopy = grid.map((gridRow: any, rowIndex: number) => {
-			return gridRow.map((node: any, colIndex: number) => {
-				return node;
-			});
-		});
-		gridCopy[yPos][xPos].isWall = true;
-		setGrid(gridCopy);
+		grid[yPos][xPos].isWall = true;
+		gridNodeRefs.current[grid[yPos][xPos].id].classList.add('wall-node');
 	};
 
 	const randomEven = (a: number, b: number) => {

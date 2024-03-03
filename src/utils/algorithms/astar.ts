@@ -3,34 +3,42 @@ import createPriorityQueue from '../priorityQueue';
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
-export default async function aStar(startNode: any, endNode: any, grid: any, setGrid: any) {
+export default async function aStar(startNode: any, endNode: any, grid: any, gridNodeRefs: any) {
 	const updateGrid = async (nodeToChange: any, type: string) => {
-		if (nodeToChange.isStart || nodeToChange.isEnd) return;
-
-		let newGrid = grid.map((gridRow: any, rowIndex: number) => {
-			return gridRow.map((node: any, colIndex: number) => {
-				return node;
-			});
-		});
+		if ((nodeToChange.isStart || nodeToChange.isEnd) && type !== 'path') return;
 
 		if (type === 'open') {
-			newGrid[nodeToChange.y][nodeToChange.x].isOpenSet = true;
-			newGrid[nodeToChange.y][nodeToChange.x].isClosedSet = false;
+			grid[nodeToChange.y][nodeToChange.x].isOpenSet = true;
+			grid[nodeToChange.y][nodeToChange.x].isClosedSet = false;
+			gridNodeRefs.current[grid[nodeToChange.y][nodeToChange.x].id].classList.add('open-set-node');
+			gridNodeRefs.current[grid[nodeToChange.y][nodeToChange.x].id].classList.remove(
+				'closed-set-node'
+			);
 		} else if (type === 'closed') {
-			newGrid[nodeToChange.y][nodeToChange.x].isOpenSet = false;
-			newGrid[nodeToChange.y][nodeToChange.x].isClosedSet = true;
+			grid[nodeToChange.y][nodeToChange.x].isOpenSet = false;
+			grid[nodeToChange.y][nodeToChange.x].isClosedSet = true;
+			gridNodeRefs.current[grid[nodeToChange.y][nodeToChange.x].id].classList.add(
+				'closed-set-node'
+			);
+			gridNodeRefs.current[grid[nodeToChange.y][nodeToChange.x].id].classList.remove(
+				'open-set-node'
+			);
 		} else if (type === 'path') {
-			newGrid[nodeToChange.y][nodeToChange.x].isOpenSet = false;
-			newGrid[nodeToChange.y][nodeToChange.x].isClosedSet = false;
-			newGrid[nodeToChange.y][nodeToChange.x].isPath = true;
+			grid[nodeToChange.y][nodeToChange.x].isOpenSet = false;
+			grid[nodeToChange.y][nodeToChange.x].isClosedSet = false;
+			grid[nodeToChange.y][nodeToChange.x].isPath = true;
+			gridNodeRefs.current[grid[nodeToChange.y][nodeToChange.x].id].classList.add('path-node');
+			gridNodeRefs.current[grid[nodeToChange.y][nodeToChange.x].id].classList.remove(
+				'closed-set-node'
+			);
+			gridNodeRefs.current[grid[nodeToChange.y][nodeToChange.x].id].classList.remove(
+				'open-set-node'
+			);
 		}
-
-		setGrid(newGrid);
 	};
 
 	// display final path
 	async function reconstructPath(endNode: any) {
-		console.log('found');
 		const path = [];
 		let currentNode = endNode;
 		while (currentNode !== null) {
@@ -39,7 +47,7 @@ export default async function aStar(startNode: any, endNode: any, grid: any, set
 		}
 
 		for (const node of path) {
-			await sleep(1);
+			await sleep(30);
 			await updateGrid(node, 'path');
 		}
 		return;
@@ -54,7 +62,7 @@ export default async function aStar(startNode: any, endNode: any, grid: any, set
 	inOpenSet.add(startNode.id);
 
 	while (!openSet.isEmpty()) {
-		await sleep(1);
+		await sleep(10);
 
 		// get node in openSet with the lowest fCost
 		let currentNode = openSet.dequeue();

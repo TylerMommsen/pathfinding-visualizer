@@ -2,30 +2,20 @@ const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 export default async function binarytree(
 	grid: any,
-	setGrid: any,
+	gridNodeRefs: any,
 	gridWidth: number,
 	gridHeight: number
 ) {
 	const updateGrid = (yPos: number, xPos: number) => {
-		let gridCopy = grid.map((gridRow: any, rowIndex: number) => {
-			return gridRow.map((node: any, colIndex: number) => {
-				return node;
-			});
-		});
-		gridCopy[yPos][xPos].isWall = false;
-		setGrid(gridCopy);
+		grid[yPos][xPos].isWall = false;
+		gridNodeRefs.current[grid[yPos][xPos].id].classList.remove('wall-node');
 	};
 
 	// fill grid
 	for (let row = 0; row < grid.length; row++) {
 		for (let col = 0; col < grid[0].length; col++) {
-			let gridCopy = grid.map((gridRow: any, rowIndex: number) => {
-				return gridRow.map((node: any, colIndex: number) => {
-					return node;
-				});
-			});
-			gridCopy[row][col].isWall = true;
-			setGrid(gridCopy);
+			grid[row][col].isWall = true;
+			gridNodeRefs.current[grid[row][col].id].classList.add('wall-node');
 		}
 	}
 
