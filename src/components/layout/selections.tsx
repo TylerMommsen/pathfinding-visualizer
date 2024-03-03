@@ -35,7 +35,7 @@ export default function Selections() {
 		setResetClicked,
 		setClearPaths,
 		algorithmRunning,
-		setAlgorithmRunning,
+		mazeGenerating,
 		setStart,
 	} = useSelections();
 
@@ -44,6 +44,7 @@ export default function Selections() {
 	};
 
 	const updateSelectionsContext = (selectionName: string, selection: string) => {
+		if (mazeGenerating) return;
 		// Convert selection name to state key format
 		const stateKey = selectionName.toLowerCase().replace(' ', '');
 		setSelections({ ...selections, [stateKey]: selection });
@@ -94,11 +95,11 @@ export default function Selections() {
 			<button
 				id="visualize-btn"
 				onClick={() => {
-					if (!algorithmRunning) setStart(true);
+					if (!algorithmRunning && !mazeGenerating && selections.selectalgorithm) setStart(true);
 				}}
-				style={algorithmRunning ? { opacity: '0.8' } : {}}
+				style={algorithmRunning || mazeGenerating ? { opacity: '0.8' } : {}}
 			>
-				{algorithmRunning ? 'Running...' : 'Start!'}
+				{algorithmRunning ? 'Running...' : <>{mazeGenerating ? 'Generating...' : 'Start!'}</>}
 			</button>
 		</div>
 	);

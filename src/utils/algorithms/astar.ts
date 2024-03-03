@@ -14,7 +14,8 @@ export default async function aStar(startNode: any, endNode: any, grid: any, gri
 			gridNodeRefs.current[grid[nodeToChange.y][nodeToChange.x].id].classList.remove(
 				'closed-set-node'
 			);
-		} else if (type === 'closed') {
+		}
+		if (type === 'closed') {
 			grid[nodeToChange.y][nodeToChange.x].isOpenSet = false;
 			grid[nodeToChange.y][nodeToChange.x].isClosedSet = true;
 			gridNodeRefs.current[grid[nodeToChange.y][nodeToChange.x].id].classList.add(
@@ -23,11 +24,13 @@ export default async function aStar(startNode: any, endNode: any, grid: any, gri
 			gridNodeRefs.current[grid[nodeToChange.y][nodeToChange.x].id].classList.remove(
 				'open-set-node'
 			);
-		} else if (type === 'path') {
+		}
+		if (type === 'path') {
 			grid[nodeToChange.y][nodeToChange.x].isOpenSet = false;
 			grid[nodeToChange.y][nodeToChange.x].isClosedSet = false;
 			grid[nodeToChange.y][nodeToChange.x].isPath = true;
 			gridNodeRefs.current[grid[nodeToChange.y][nodeToChange.x].id].classList.add('path-node');
+			gridNodeRefs.current[grid[nodeToChange.y][nodeToChange.x].id].classList.add('animated');
 			gridNodeRefs.current[grid[nodeToChange.y][nodeToChange.x].id].classList.remove(
 				'closed-set-node'
 			);
@@ -46,9 +49,9 @@ export default async function aStar(startNode: any, endNode: any, grid: any, gri
 			currentNode = currentNode.previousNode;
 		}
 
-		for (const node of path) {
+		for (let i = 0; i < path.length - 1; i++) {
 			await sleep(30);
-			await updateGrid(node, 'path');
+			await updateGrid(path[i], 'path');
 		}
 		return;
 	}

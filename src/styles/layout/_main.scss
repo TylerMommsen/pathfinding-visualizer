@@ -21,21 +21,19 @@
 	#grid {
 		display: grid;
 
-		grid-template-columns: repeat(81, 1fr);
 		box-shadow: 5px 5px 5px rgba($color: #000000, $alpha: 0.1);
 
 		.grid-node {
 			outline: 1px solid $grid-line-color;
 			background-color: $empty;
-			height: 1.2vw;
-			width: 1.2vw;
+			// height: 1.2vw;
+			// width: 1.2vw;
 			cursor: pointer;
 			transition: all 0.2 ease;
 		}
 
 		.path-node {
 			background-color: $path-node;
-			animation: popIn 0.2s ease-out;
 		}
 		.open-set-node {
 			background-color: $open-node;
@@ -47,7 +45,7 @@
 			background-color: $wall-node;
 		}
 		.animated {
-			animation: popIn 0.2s ease-out;
+			animation: popIn 0.1s ease-out;
 		}
 		.temp-node {
 			z-index: 100;

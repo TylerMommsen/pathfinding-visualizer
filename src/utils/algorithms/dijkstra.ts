@@ -44,7 +44,7 @@ export default async function dijkstra(startNode: any, endNode: any, grid: any, 
 		}
 
 		for (const node of path) {
-			await sleep(1);
+			await sleep(0.1);
 			await updateGrid(node, 'path');
 		}
 		return path;

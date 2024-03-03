@@ -32,7 +32,6 @@ export default async function sidewinder(
 			const currentNode = grid[row][col];
 			updateGrid(currentNode.y, currentNode.x);
 			run.push(currentNode);
-			console.log(currentNode);
 
 			if (Math.random() < 0.6 && col !== gridWidth - 2) {
 				await sleep(0.1);

@@ -9,7 +9,7 @@ const SelectionsContext = createContext<any>(null);
 
 export function SelectionsProvider({ children }: SelectionsContextProvider) {
 	const [selections, setSelections] = useState<any>({
-		selectalgorithm: '',
+		selectalgorithm: 'A*',
 		selectmaze: '',
 		gridsize: 'Large',
 		mazespeed: 'Normal',
@@ -20,6 +20,7 @@ export function SelectionsProvider({ children }: SelectionsContextProvider) {
 	const [clearPaths, setClearPaths] = useState(false);
 	const [start, setStart] = useState(false);
 	const [algorithmRunning, setAlgorithmRunning] = useState(false);
+	const [mazeGenerating, setMazeGenerating] = useState(false);
 
 	return (
 		<SelectionsContext.Provider
@@ -34,6 +35,8 @@ export function SelectionsProvider({ children }: SelectionsContextProvider) {
 				setClearPaths,
 				algorithmRunning,
 				setAlgorithmRunning,
+				mazeGenerating,
+				setMazeGenerating,
 			}}
 		>
 			{children}
