@@ -1,6 +1,12 @@
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
-export default async function dijkstra(startNode: any, endNode: any, grid: any, gridNodeRefs: any) {
+export default async function dijkstra(
+	startNode: any,
+	endNode: any,
+	grid: any,
+	gridNodeRefs: any,
+	speed: number
+) {
 	const updateGrid = async (nodeToChange: any, type: string) => {
 		if ((nodeToChange.isStart || nodeToChange.isEnd) && type !== 'path') return;
 
@@ -25,6 +31,7 @@ export default async function dijkstra(startNode: any, endNode: any, grid: any, 
 			grid[nodeToChange.y][nodeToChange.x].isClosedSet = false;
 			grid[nodeToChange.y][nodeToChange.x].isPath = true;
 			gridNodeRefs.current[grid[nodeToChange.y][nodeToChange.x].id].classList.add('path-node');
+			gridNodeRefs.current[grid[nodeToChange.y][nodeToChange.x].id].classList.add('animated');
 			gridNodeRefs.current[grid[nodeToChange.y][nodeToChange.x].id].classList.remove(
 				'closed-set-node'
 			);
@@ -44,7 +51,9 @@ export default async function dijkstra(startNode: any, endNode: any, grid: any, 
 		}
 
 		for (const node of path) {
-			await sleep(0.1);
+			if (speed !== 0) {
+				await sleep(50);
+			}
 			await updateGrid(node, 'path');
 		}
 		return path;
@@ -56,7 +65,9 @@ export default async function dijkstra(startNode: any, endNode: any, grid: any, 
 	openSetQ.push(startNode);
 
 	while (openSetQ.length > 0) {
-		await sleep(0.1);
+		if (speed !== 0) {
+			await sleep(speed);
+		}
 
 		let currentNode = openSetQ.shift();
 		closedSet.add(currentNode);

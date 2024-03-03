@@ -4,7 +4,8 @@ export default async function huntandkill(
 	grid: any,
 	gridNodeRefs: any,
 	gridWidth: number,
-	gridHeight: number
+	gridHeight: number,
+	speed: number
 ) {
 	const visited: any = [];
 
@@ -142,7 +143,9 @@ export default async function huntandkill(
 
 	let currentNode = generateStartPoint();
 	while (currentNode) {
-		await sleep(1);
+		if (speed !== 0) {
+			await sleep(speed);
+		}
 		visited.push(currentNode);
 		const neighbors = getUnvisitedNeighbors(currentNode);
 

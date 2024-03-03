@@ -3,7 +3,13 @@ import createPriorityQueue from '../priorityQueue';
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
-export default async function aStar(startNode: any, endNode: any, grid: any, gridNodeRefs: any) {
+export default async function aStar(
+	startNode: any,
+	endNode: any,
+	grid: any,
+	gridNodeRefs: any,
+	speed: number
+) {
 	const updateGrid = async (nodeToChange: any, type: string) => {
 		if ((nodeToChange.isStart || nodeToChange.isEnd) && type !== 'path') return;
 
@@ -50,7 +56,9 @@ export default async function aStar(startNode: any, endNode: any, grid: any, gri
 		}
 
 		for (let i = 0; i < path.length - 1; i++) {
-			await sleep(30);
+			if (speed !== 0) {
+				await sleep(50);
+			}
 			await updateGrid(path[i], 'path');
 		}
 		return;
@@ -65,7 +73,9 @@ export default async function aStar(startNode: any, endNode: any, grid: any, gri
 	inOpenSet.add(startNode.id);
 
 	while (!openSet.isEmpty()) {
-		await sleep(10);
+		if (speed !== 0) {
+			await sleep(speed);
+		}
 
 		// get node in openSet with the lowest fCost
 		let currentNode = openSet.dequeue();

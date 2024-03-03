@@ -1,5 +1,6 @@
 'use client';
 import { useSelections } from '@/contexts/SelectionsContext';
+import Image from 'next/image';
 
 export default function Info() {
 	const { selections } = useSelections();
@@ -78,6 +79,15 @@ export default function Info() {
 						</g>
 					</svg>
 					<p>End</p>
+				</div>
+
+				<div className="node-info-item">
+					<Image src="/left-click-icon.svg" width={20} height={20} alt="left click icon" />
+					Place Wall
+				</div>
+				<div className="node-info-item">
+					<Image src="/right-click-icon.svg" width={20} height={20} alt="left click icon" />
+					Remove Wall
 				</div>
 			</div>
 			<p>

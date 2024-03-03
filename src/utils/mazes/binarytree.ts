@@ -4,7 +4,8 @@ export default async function binarytree(
 	grid: any,
 	gridNodeRefs: any,
 	gridWidth: number,
-	gridHeight: number
+	gridHeight: number,
+	speed: number
 ) {
 	const updateGrid = (yPos: number, xPos: number) => {
 		grid[yPos][xPos].isWall = false;
@@ -44,7 +45,9 @@ export default async function binarytree(
 			}
 
 			if (northNeighbor && westNeighbor) {
-				await sleep(1);
+				if (speed !== 0) {
+					await sleep(speed);
+				}
 
 				// if both paths are available
 				const random = Math.floor(Math.random() * 2);

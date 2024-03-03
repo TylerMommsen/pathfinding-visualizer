@@ -72,6 +72,8 @@ export default function Grid() {
 		x: Math.floor(gridState.width / 2 + 10),
 		y: Math.floor(gridState.height / 2),
 	});
+	const [mazeSpeed, setMazeSpeed] = useState(20);
+	const [pathSpeed, setPathSpeed] = useState(20);
 	const gridNodeRefs = useRef<any>({}); // using refs to improve performance
 
 	const [isMouseDown, setIsMouseDown] = useState(false); // checks if user is clicking or dragging mouse
@@ -135,21 +137,24 @@ export default function Grid() {
 						gridState.grid[startNodePos.y][startNodePos.x],
 						gridState.grid[endNodePos.y][endNodePos.x],
 						gridState.grid,
-						gridNodeRefs
+						gridNodeRefs,
+						pathSpeed
 					);
 				} else if (selections.selectalgorithm === 'Dijkstra') {
 					done = await dijkstra(
 						gridState.grid[startNodePos.y][startNodePos.x],
 						gridState.grid[endNodePos.y][endNodePos.x],
 						gridState.grid,
-						gridNodeRefs
+						gridNodeRefs,
+						pathSpeed
 					);
 				} else if (selections.selectalgorithm === 'Bidirectional') {
 					done = await bidirectional(
 						gridState.grid[startNodePos.y][startNodePos.x],
 						gridState.grid[endNodePos.y][endNodePos.x],
 						gridState.grid,
-						gridNodeRefs
+						gridNodeRefs,
+						pathSpeed
 					);
 				}
 
@@ -182,18 +187,49 @@ export default function Grid() {
 						gridState.grid,
 						gridNodeRefs,
 						gridState.width,
-						gridState.height
+						gridState.height,
+						mazeSpeed
 					);
 				} else if (selections.selectmaze === 'Binary Tree') {
-					done = await binarytree(gridState.grid, gridNodeRefs, gridState.width, gridState.height);
+					done = await binarytree(
+						gridState.grid,
+						gridNodeRefs,
+						gridState.width,
+						gridState.height,
+						mazeSpeed
+					);
 				} else if (selections.selectmaze === 'Sidewinder') {
-					done = await sidewinder(gridState.grid, gridNodeRefs, gridState.width, gridState.height);
+					done = await sidewinder(
+						gridState.grid,
+						gridNodeRefs,
+						gridState.width,
+						gridState.height,
+						mazeSpeed
+					);
 				} else if (selections.selectmaze === "Prim's") {
-					done = await prims(gridState.grid, gridNodeRefs, gridState.width, gridState.height);
+					done = await prims(
+						gridState.grid,
+						gridNodeRefs,
+						gridState.width,
+						gridState.height,
+						mazeSpeed
+					);
 				} else if (selections.selectmaze === 'Hunt And Kill') {
-					done = await huntandkill(gridState.grid, gridNodeRefs, gridState.width, gridState.height);
+					done = await huntandkill(
+						gridState.grid,
+						gridNodeRefs,
+						gridState.width,
+						gridState.height,
+						mazeSpeed
+					);
 				} else if (selections.selectmaze === 'Random Map') {
-					done = await randommap(gridState.grid, gridNodeRefs, gridState.width, gridState.height);
+					done = await randommap(
+						gridState.grid,
+						gridNodeRefs,
+						gridState.width,
+						gridState.height,
+						mazeSpeed
+					);
 				}
 
 				if (done) setMazeGenerating(false);
@@ -234,6 +270,35 @@ export default function Grid() {
 			y: Math.floor(newHeight / 2),
 		});
 	}, [selections.gridsize]);
+
+	// update pathfinding speed or maze generation speed
+	useEffect(() => {
+		if (selections.pathspeed === 'Fast') {
+			setPathSpeed(1);
+		}
+		if (selections.pathspeed === 'Normal') {
+			setPathSpeed(20);
+		}
+		if (selections.pathspeed === 'Slow') {
+			setPathSpeed(100);
+		}
+		if (selections.pathspeed === 'Instant') {
+			setPathSpeed(0);
+		}
+
+		if (selections.mazespeed === 'Fast') {
+			setMazeSpeed(1);
+		}
+		if (selections.mazespeed === 'Normal') {
+			setMazeSpeed(20);
+		}
+		if (selections.mazespeed === 'Slow') {
+			setMazeSpeed(100);
+		}
+		if (selections.mazespeed === 'Instant') {
+			setMazeSpeed(0);
+		}
+	}, [selections.mazespeed, selections.pathspeed]);
 
 	const handleMouseDown = (row: number, col: number, event: React.MouseEvent<HTMLDivElement>) => {
 		event.preventDefault(); // Prevent the default context menu

@@ -4,7 +4,8 @@ export default async function bidirectional(
 	startNode: any,
 	endNode: any,
 	grid: any,
-	gridNodeRefs: any
+	gridNodeRefs: any,
+	speed: number
 ) {
 	const updateGrid = async (nodeToChange: any, type: string) => {
 		if ((nodeToChange.isStart || nodeToChange.isEnd) && type !== 'path') return;
@@ -59,7 +60,9 @@ export default async function bidirectional(
 		const fullPath = pathForward.concat(pathBackward);
 
 		for (const node of fullPath) {
-			await sleep(1);
+			if (speed !== 0) {
+				await sleep(50);
+			}
 			await updateGrid(node, 'path');
 		}
 		return;
@@ -79,7 +82,9 @@ export default async function bidirectional(
 	backwardsQ.push(endNode);
 
 	while (forwardsQ.length > 0 && backwardsQ.length > 0) {
-		await sleep(0.1);
+		if (speed !== 0) {
+			await sleep(speed);
+		}
 
 		// forwards
 

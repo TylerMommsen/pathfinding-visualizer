@@ -4,7 +4,8 @@ export default async function recursivedivision(
 	grid: any,
 	gridNodeRefs: any,
 	gridWidth: number,
-	gridHeight: number
+	gridHeight: number,
+	speed: number
 ) {
 	const updateGrid = (yPos: number, xPos: number) => {
 		grid[yPos][xPos].isWall = true;
@@ -42,7 +43,6 @@ export default async function recursivedivision(
 	for (let row = 0; row < grid.length; row++) {
 		for (let col = 0; col < grid[0].length; col++) {
 			if (row === 0 || col === 0 || row === grid.length - 1 || col === grid[0].length - 1) {
-				// await sleep(1);
 				updateGrid(row, col);
 			}
 		}
@@ -70,7 +70,9 @@ export default async function recursivedivision(
 			// make a horizontal wall
 			for (let col = startCol; col <= endCol; col++) {
 				if (col !== passageCol) {
-					await sleep(1);
+					if (speed !== 0) {
+						await sleep(speed);
+					}
 					updateGrid(wallRow, col);
 				}
 			}
@@ -78,7 +80,9 @@ export default async function recursivedivision(
 			// make a vertical wall
 			for (let row = startRow; row <= endRow; row++) {
 				if (row !== passageRow) {
-					await sleep(1);
+					if (speed !== 0) {
+						await sleep(speed);
+					}
 					updateGrid(row, wallCol);
 				}
 			}

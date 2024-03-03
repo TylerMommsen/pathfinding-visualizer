@@ -4,7 +4,8 @@ export default async function sidewinder(
 	grid: any,
 	gridNodeRefs: any,
 	gridWidth: number,
-	gridHeight: number
+	gridHeight: number,
+	speed: number
 ) {
 	const updateGrid = (yPos: number, xPos: number) => {
 		grid[yPos][xPos].isWall = false;
@@ -34,12 +35,16 @@ export default async function sidewinder(
 			run.push(currentNode);
 
 			if (Math.random() < 0.6 && col !== gridWidth - 2) {
-				await sleep(0.1);
+				if (speed !== 0) {
+					await sleep(speed);
+				}
 				updateGrid(currentNode.y, currentNode.x + 1);
 			} else if (run.length > 0 && row > 1) {
 				const randomIndex = Math.floor(Math.random() * run.length);
 				const randomNode = run[randomIndex];
-				await sleep(0.1);
+				if (speed !== 0) {
+					await sleep(speed);
+				}
 				updateGrid(randomNode.neighbors[0].y, randomNode.neighbors[0].x);
 				run = [];
 			}

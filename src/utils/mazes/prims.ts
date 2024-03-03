@@ -4,7 +4,8 @@ export default async function prims(
 	grid: any,
 	gridNodeRefs: any,
 	gridWidth: number,
-	gridHeight: number
+	gridHeight: number,
+	speed: number
 ) {
 	const frontier: any = [];
 	const visited = new Set();
@@ -100,7 +101,9 @@ export default async function prims(
 		const randomAdjacentIn = adjacentIns[Math.floor(Math.random() * adjacentIns.length)];
 		for (let i = 0; i < adjacentIns.length; i++) {
 			if (adjacentIns[i] === randomAdjacentIn) {
-				await sleep(0.1);
+				if (speed !== 0) {
+					await sleep(speed);
+				}
 				const wallBetween = getWallBetween(randomFrontierNode, randomAdjacentIn);
 				const indexToSplice = frontier.indexOf(randomFrontierNode);
 				connect(randomFrontierNode, randomAdjacentIn, wallBetween);

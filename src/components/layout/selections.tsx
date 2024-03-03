@@ -21,8 +21,8 @@ const selectionContents: SelectionContentsType = {
 		'Random Map',
 	],
 	'Grid Size': ['Small', 'Large'],
-	'Maze Speed': ['Slow', 'Normal', 'Fast'],
-	'Path Speed': ['Slow', 'Normal', 'Fast'],
+	'Maze Speed': ['Slow', 'Normal', 'Fast', 'Instant'],
+	'Path Speed': ['Slow', 'Normal', 'Fast', 'Instant'],
 };
 
 type SelectionName = keyof SelectionContentsType;
@@ -44,7 +44,7 @@ export default function Selections() {
 	};
 
 	const updateSelectionsContext = (selectionName: string, selection: string) => {
-		if (mazeGenerating) return;
+		if (mazeGenerating || algorithmRunning) return;
 		// Convert selection name to state key format
 		const stateKey = selectionName.toLowerCase().replace(' ', '');
 		setSelections({ ...selections, [stateKey]: selection });
@@ -84,11 +84,19 @@ export default function Selections() {
 				</div>
 			))}
 
-			<div onClick={() => setResetClicked(true)}>
+			<div
+				onClick={() => {
+					if (!algorithmRunning && !mazeGenerating) setResetClicked(true);
+				}}
+			>
 				<button className="selection-item">Reset</button>
 			</div>
 
-			<div onClick={() => setClearPaths(true)}>
+			<div
+				onClick={() => {
+					if (!algorithmRunning && !mazeGenerating) setClearPaths(true);
+				}}
+			>
 				<button className="selection-item">Clear Paths</button>
 			</div>
 
