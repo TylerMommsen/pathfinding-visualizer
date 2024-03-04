@@ -15,6 +15,8 @@ export default async function binarytree(
 	// fill grid
 	for (let row = 0; row < grid.length; row++) {
 		for (let col = 0; col < grid[0].length; col++) {
+			if (grid[row][col].isStart || grid[row][col].isEnd) continue;
+
 			grid[row][col].isWall = true;
 			gridNodeRefs.current[grid[row][col].id].classList.add('wall-node');
 		}

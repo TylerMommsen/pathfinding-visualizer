@@ -10,6 +10,8 @@ export default async function randommap(
 	// fill grid
 	for (let row = 0; row < gridHeight; row++) {
 		for (let col = 0; col < gridWidth; col++) {
+			if (grid[row][col].isStart || grid[row][col].isEnd) continue;
+
 			if (Math.random() < 0.3) {
 				if (speed !== 0) {
 					await sleep(speed);

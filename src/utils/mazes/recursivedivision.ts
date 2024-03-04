@@ -8,6 +8,8 @@ export default async function recursivedivision(
 	speed: number
 ) {
 	const updateGrid = (yPos: number, xPos: number) => {
+		if (grid[yPos][xPos].isStart || grid[yPos][xPos].isEnd) return;
+
 		grid[yPos][xPos].isWall = true;
 		gridNodeRefs.current[grid[yPos][xPos].id].classList.add('wall-node');
 	};

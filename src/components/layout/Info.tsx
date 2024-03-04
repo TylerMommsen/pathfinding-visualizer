@@ -26,20 +26,20 @@ export default function Info() {
 				</div>
 				<div className="node-info-item">
 					<svg
-						fill="#000000"
-						viewBox="0 0 1920 1920"
+						viewBox="0 0 24 24"
+						fill="none"
 						xmlns="http://www.w3.org/2000/svg"
-						transform="matrix(-1, 0, 0, 1, 0, 0)"
 						width={20}
 						height={20}
 					>
-						<g id="SVGRepo_bgCarrier" strokeWidth="1"></g>
-						<g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"></g>
+						<g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+						<g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
 						<g id="SVGRepo_iconCarrier">
+							{' '}
 							<path
-								d="m1394.006 0 92.299 92.168-867.636 867.767 867.636 867.636-92.299 92.429-959.935-960.065z"
-								fillRule="evenodd"
-							></path>
+								d="M5.75 1C6.16421 1 6.5 1.33579 6.5 1.75V3.6L8.22067 3.25587C9.8712 2.92576 11.5821 3.08284 13.1449 3.70797L13.3486 3.78943C14.9097 4.41389 16.628 4.53051 18.2592 4.1227C19.0165 3.93339 19.75 4.50613 19.75 5.28669V12.6537C19.75 13.298 19.3115 13.8596 18.6864 14.0159L18.472 14.0695C16.7024 14.5119 14.8385 14.3854 13.1449 13.708C11.5821 13.0828 9.8712 12.9258 8.22067 13.2559L6.5 13.6V21.75C6.5 22.1642 6.16421 22.5 5.75 22.5C5.33579 22.5 5 22.1642 5 21.75V1.75C5 1.33579 5.33579 1 5.75 1Z"
+								fill="#292929"
+							></path>{' '}
 						</g>
 					</svg>
 					<p>Start</p>

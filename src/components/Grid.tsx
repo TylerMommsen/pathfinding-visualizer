@@ -12,6 +12,7 @@ import recursivedivision from '@/utils/mazes/recursivedivision';
 import sidewinder from '@/utils/mazes/sidewinder';
 import { useEffect, useRef, useState } from 'react';
 import React from 'react';
+import Image from 'next/image';
 
 const getNeighbors = (x: any, y: any, grid: any, gridHeight: number, gridWidth: number) => {
 	const neighbors = [];
@@ -91,8 +92,11 @@ export default function Grid() {
 		clearPaths,
 		setClearPaths,
 		mazeGenerating,
+		algorithmRunning,
 		setMazeGenerating,
 		setAlgorithmRunning,
+		algorithmDone,
+		setAlgorithmDone,
 	} = useSelections();
 
 	// remove any paths/visualization from previous algorithms or reset will walls too
@@ -100,6 +104,8 @@ export default function Grid() {
 		for (let row = 0; row < gridState.height; row++) {
 			for (let col = 0; col < gridState.width; col++) {
 				const node = gridState.grid[row][col];
+				if (!gridNodeRefs.current[node.id]) return;
+
 				node.isPath = false;
 				node.isOpenSet = false;
 				node.isClosedSet = false;
@@ -117,11 +123,73 @@ export default function Grid() {
 			}
 		}
 
+		if (!draggingNode) {
+			setAlgorithmDone(false);
+		}
 		if (!full) setClearPaths(false); // if only reset paths is clicked
 		// if a full grid reset is clicked
 		if (full) {
 			if (resetClicked) setSelections({ ...selections, selectmaze: '' });
 			setResetClicked(false);
+		}
+	};
+
+	// if an algorithm has been run and the user moves start/end, then visualize the new potential paths
+	const reRunAlgorithm = async (row: number, col: number) => {
+		resetGrid(false);
+
+		if (draggingNode === 'start') {
+			if (selections.selectalgorithm === 'A*') {
+				let path = await aStar(
+					gridState.grid[row][col],
+					gridState.grid[endNodePos.y][endNodePos.x],
+					gridState.grid,
+					gridNodeRefs,
+					0
+				);
+			} else if (selections.selectalgorithm === 'Dijkstra') {
+				await dijkstra(
+					gridState.grid[row][col],
+					gridState.grid[endNodePos.y][endNodePos.x],
+					gridState.grid,
+					gridNodeRefs,
+					0
+				);
+			} else if (selections.selectalgorithm === 'Bidirectional') {
+				await bidirectional(
+					gridState.grid[row][col],
+					gridState.grid[endNodePos.y][endNodePos.x],
+					gridState.grid,
+					gridNodeRefs,
+					0
+				);
+			}
+		} else if (draggingNode === 'end') {
+			if (selections.selectalgorithm === 'A*') {
+				await aStar(
+					gridState.grid[startNodePos.y][startNodePos.x],
+					gridState.grid[row][col],
+					gridState.grid,
+					gridNodeRefs,
+					0
+				);
+			} else if (selections.selectalgorithm === 'Dijkstra') {
+				await dijkstra(
+					gridState.grid[startNodePos.y][startNodePos.x],
+					gridState.grid[row][col],
+					gridState.grid,
+					gridNodeRefs,
+					0
+				);
+			} else if (selections.selectalgorithm === 'Bidirectional') {
+				await bidirectional(
+					gridState.grid[startNodePos.y][startNodePos.x],
+					gridState.grid[row][col],
+					gridState.grid,
+					gridNodeRefs,
+					0
+				);
+			}
 		}
 	};
 
@@ -131,6 +199,7 @@ export default function Grid() {
 				resetGrid(false);
 				let done = false;
 				setAlgorithmRunning(true);
+				setAlgorithmDone(false);
 
 				if (selections.selectalgorithm === 'A*') {
 					done = await aStar(
@@ -160,6 +229,7 @@ export default function Grid() {
 
 				if (done) {
 					setAlgorithmRunning(false);
+					setAlgorithmDone(true);
 					setStart(false);
 				}
 			}
@@ -243,6 +313,7 @@ export default function Grid() {
 
 	// update grid size
 	useEffect(() => {
+		resetGrid(true);
 		let newSize = '';
 		let newWidth = 0;
 		let newHeight = 0;
@@ -269,6 +340,7 @@ export default function Grid() {
 			x: Math.floor(newWidth / 2 + 10),
 			y: Math.floor(newHeight / 2),
 		});
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [selections.gridsize]);
 
 	// update pathfinding speed or maze generation speed
@@ -305,6 +377,8 @@ export default function Grid() {
 		setIsMouseDown(true);
 		setMouseButton(event.button);
 
+		if (algorithmRunning || mazeGenerating) return;
+
 		const node = gridState.grid[row][col];
 		if (node.isStart || node.isEnd) {
 			setDraggingNode(node.isStart ? 'start' : 'end');
@@ -315,18 +389,41 @@ export default function Grid() {
 		}
 	};
 
-	const handleMouseEnter = (row: number, col: number) => {
+	const handleMouseLeave = (row: number, col: number) => {
+		if (draggingNode && gridState.grid[row][col].isWall) {
+			gridNodeRefs.current[gridState.grid[row][col].id].className = 'grid-node wall-node';
+		}
+	};
+
+	const handleMouseEnter = async (row: number, col: number) => {
 		if (!isMouseDown) return;
 
 		if (!draggingNode) {
 			handleNodeClick(row, col, mouseButton);
 		} else {
-			if (gridState.grid[row][col].isStart && draggingNode === 'end') {
-				return;
-			} else if (gridState.grid[row][col].isEnd && draggingNode === 'start') {
+			if (
+				(gridState.grid[row][col].isStart && draggingNode === 'end') ||
+				(gridState.grid[row][col].isEnd && draggingNode === 'start')
+			) {
 				return;
 			} else {
 				setTemporaryNode({ x: col, y: row });
+
+				if (gridState.grid[row][col].isWall) {
+					gridNodeRefs.current[gridState.grid[row][col].id].className = 'grid-node temp-node';
+				}
+
+				if (draggingNode === 'start') {
+					gridState.grid[startNodePos.y][startNodePos.x].isStart = false;
+				}
+				if (draggingNode === 'end') {
+					gridState.grid[endNodePos.y][endNodePos.x].isEnd = false;
+				}
+
+				// if an algorithm has been run and the user moves start/end, then visualize the new potential paths
+				if (algorithmDone) {
+					reRunAlgorithm(row, col);
+				}
 			}
 		}
 	};
@@ -345,12 +442,22 @@ export default function Grid() {
 				// set new end node location
 				setEndNodePos({ x: temporaryNode.x, y: temporaryNode.y });
 				gridState.grid[temporaryNode.y][temporaryNode.x].isEnd = true;
-				if (gridState.grid[temporaryNode.y][temporaryNode.x].isWall)
-					gridState.grid[temporaryNode.y][temporaryNode.x].isWall = false;
 			}
 
-			if (gridState.grid[temporaryNode.y][temporaryNode.x].isWall)
+			gridNodeRefs.current[gridState.grid[startNodePos.y][startNodePos.x].id].classList.remove(
+				'temp-node'
+			);
+			gridNodeRefs.current[gridState.grid[temporaryNode.y][temporaryNode.x].id].classList.remove(
+				'temp-node'
+			);
+
+			// if new start/end is on a wall, then remove that wall
+			if (gridState.grid[temporaryNode.y][temporaryNode.x].isWall) {
 				gridState.grid[temporaryNode.y][temporaryNode.x].isWall = false;
+				gridNodeRefs.current[gridState.grid[temporaryNode.y][temporaryNode.x].id].classList.remove(
+					'wall-node'
+				);
+			}
 		}
 
 		setIsMouseDown(false);
@@ -361,7 +468,7 @@ export default function Grid() {
 	// place or remove walls (left/right click)
 	const handleNodeClick = (row: number, col: number, clickType: number) => {
 		if (gridState.grid[row][col].isStart || gridState.grid[row][col].isEnd) return;
-		// using refs to significantly improve performance
+
 		const nodeRef = gridNodeRefs.current[gridState.grid[row][col].id];
 		if (nodeRef) {
 			if (clickType == 0) {
@@ -394,15 +501,10 @@ export default function Grid() {
 					<div
 						key={node.id}
 						ref={(el) => (gridNodeRefs.current[node.id] = el)}
-						className={`grid-node ${node.isWall ? 'wall-node' : ''} ${
-							temporaryNode.x === node.x &&
-							temporaryNode.y === node.y &&
-							(draggingNode === 'start' || draggingNode === 'end')
-								? 'temp-node'
-								: ''
-						}`}
+						className={`grid-node`}
 						onMouseDown={(event) => handleMouseDown(rowIndex, colIndex, event)}
 						onMouseEnter={() => handleMouseEnter(rowIndex, colIndex)}
+						onMouseLeave={() => handleMouseLeave(rowIndex, colIndex)}
 						style={{
 							width: gridState.nodeSize,
 							height: gridState.nodeSize,
@@ -413,16 +515,16 @@ export default function Grid() {
 							temporaryNode.y === node.y &&
 							draggingNode === 'start') ? (
 							// SVG for start node
-							<svg
-								fill="#000000"
-								viewBox="0 0 1920 1920"
-								xmlns="http://www.w3.org/2000/svg"
-								transform="matrix(-1, 0, 0, 1, 0, 0)"
-							>
-								<path
-									d="m1394.006 0 92.299 92.168-867.636 867.767 867.636 867.636-92.299 92.429-959.935-960.065z"
-									fillRule="evenodd"
-								></path>
+							<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+								<g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+								<g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+								<g id="SVGRepo_iconCarrier">
+									{' '}
+									<path
+										d="M5.75 1C6.16421 1 6.5 1.33579 6.5 1.75V3.6L8.22067 3.25587C9.8712 2.92576 11.5821 3.08284 13.1449 3.70797L13.3486 3.78943C14.9097 4.41389 16.628 4.53051 18.2592 4.1227C19.0165 3.93339 19.75 4.50613 19.75 5.28669V12.6537C19.75 13.298 19.3115 13.8596 18.6864 14.0159L18.472 14.0695C16.7024 14.5119 14.8385 14.3854 13.1449 13.708C11.5821 13.0828 9.8712 12.9258 8.22067 13.2559L6.5 13.6V21.75C6.5 22.1642 6.16421 22.5 5.75 22.5C5.33579 22.5 5 22.1642 5 21.75V1.75C5 1.33579 5.33579 1 5.75 1Z"
+										fill="#292929"
+									></path>{' '}
+								</g>
 							</svg>
 						) : null}
 						{(node.isEnd && draggingNode !== 'end') ||
@@ -438,7 +540,6 @@ export default function Grid() {
 								<g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"></g>
 								<g id="SVGRepo_iconCarrier">
 									{' '}
-									<title>finish_line [#104]</title> <desc>Created with Sketch.</desc> <defs> </defs>{' '}
 									<g id="Page-1" stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
 										{' '}
 										<g

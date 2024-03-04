@@ -15,6 +15,7 @@ export default async function sidewinder(
 	// fill grid except for first row
 	for (let row = 0; row < grid.length; row++) {
 		for (let col = 0; col < grid[0].length; col++) {
+			if (grid[row][col].isStart || grid[row][col].isEnd) continue;
 			if (row === 1) {
 				if (col === 0 || col === gridWidth - 1) {
 					grid[row][col].isWall = true;

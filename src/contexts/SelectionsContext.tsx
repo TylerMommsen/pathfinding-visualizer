@@ -20,6 +20,7 @@ export function SelectionsProvider({ children }: SelectionsContextProvider) {
 	const [clearPaths, setClearPaths] = useState(false);
 	const [start, setStart] = useState(false);
 	const [algorithmRunning, setAlgorithmRunning] = useState(false);
+	const [algorithmDone, setAlgorithmDone] = useState(false); // used for when user wants to drag start or end node to visualize other paths
 	const [mazeGenerating, setMazeGenerating] = useState(false);
 
 	return (
@@ -37,6 +38,8 @@ export function SelectionsProvider({ children }: SelectionsContextProvider) {
 				setAlgorithmRunning,
 				mazeGenerating,
 				setMazeGenerating,
+				algorithmDone,
+				setAlgorithmDone,
 			}}
 		>
 			{children}

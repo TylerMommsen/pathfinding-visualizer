@@ -56,6 +56,10 @@
 			padding: 1rem 2rem 1rem 2rem;
 			font-size: 1.3rem;
 			cursor: pointer;
+
+			&:hover {
+				opacity: 0.9;
+			}
 		}
 
 		.drop-down-content {
@@ -98,5 +102,23 @@
 
 	#help-btn {
 		justify-self: end;
+		font-weight: bold;
+		cursor: pointer;
+		background-color: transparent;
+		color: rgba($color: $primary, $alpha: 0.9);
+		border: none;
+		font-size: 1rem;
+		text-align: start;
+		padding: 1rem;
+		white-space: nowrap;
+		cursor: pointer;
+
+		&:hover {
+			text-decoration: underline;
+			text-decoration-thickness: 4px;
+			text-underline-offset: 19px;
+
+			text-decoration-color: $accent;
+		}
 	}
 }

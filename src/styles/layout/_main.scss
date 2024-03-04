@@ -26,8 +26,6 @@
 		.grid-node {
 			outline: 1px solid $grid-line-color;
 			background-color: $empty;
-			// height: 1.2vw;
-			// width: 1.2vw;
 			cursor: pointer;
 			transition: all 0.2 ease;
 		}
@@ -45,7 +43,7 @@
 			background-color: $wall-node;
 		}
 		.animated {
-			animation: popIn 0.1s ease-out;
+			animation: popIn 0.2s ease-out;
 		}
 		.temp-node {
 			z-index: 100;

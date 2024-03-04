@@ -36,7 +36,9 @@ export default async function aStar(
 			grid[nodeToChange.y][nodeToChange.x].isClosedSet = false;
 			grid[nodeToChange.y][nodeToChange.x].isPath = true;
 			gridNodeRefs.current[grid[nodeToChange.y][nodeToChange.x].id].classList.add('path-node');
-			gridNodeRefs.current[grid[nodeToChange.y][nodeToChange.x].id].classList.add('animated');
+			if (speed !== 0) {
+				gridNodeRefs.current[grid[nodeToChange.y][nodeToChange.x].id].classList.add('animated');
+			}
 			gridNodeRefs.current[grid[nodeToChange.y][nodeToChange.x].id].classList.remove(
 				'closed-set-node'
 			);
@@ -55,13 +57,13 @@ export default async function aStar(
 			currentNode = currentNode.previousNode;
 		}
 
-		for (let i = 0; i < path.length - 1; i++) {
+		for (let i = 0; i < path.length; i++) {
 			if (speed !== 0) {
 				await sleep(50);
 			}
 			await updateGrid(path[i], 'path');
 		}
-		return;
+		return path;
 	}
 
 	const openSet = createPriorityQueue(); // priority queue to efficiently get lowest f score nodes
@@ -83,7 +85,7 @@ export default async function aStar(
 
 		// If we've reached the end, backtrack to find the path
 		if (currentNode.x === endNode.x && currentNode.y === endNode.y) {
-			await reconstructPath(endNode);
+			let path = await reconstructPath(endNode);
 			return true;
 		}
 

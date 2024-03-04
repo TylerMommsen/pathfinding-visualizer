@@ -31,6 +31,9 @@ export default async function bidirectional(
 			grid[nodeToChange.y][nodeToChange.x].isClosedSet = false;
 			grid[nodeToChange.y][nodeToChange.x].isPath = true;
 			gridNodeRefs.current[grid[nodeToChange.y][nodeToChange.x].id].classList.add('path-node');
+			if (speed !== 0) {
+				gridNodeRefs.current[grid[nodeToChange.y][nodeToChange.x].id].classList.add('animated');
+			}
 			gridNodeRefs.current[grid[nodeToChange.y][nodeToChange.x].id].classList.remove(
 				'closed-set-node'
 			);

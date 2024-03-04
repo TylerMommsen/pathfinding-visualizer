@@ -11,6 +11,8 @@ export default async function prims(
 	const visited = new Set();
 
 	const updateGrid = (yPos: number, xPos: number) => {
+		if (grid[yPos][xPos].isStart || grid[yPos][xPos].isEnd) return;
+
 		grid[yPos][xPos].isWall = false;
 		gridNodeRefs.current[grid[yPos][xPos].id].classList.remove('wall-node');
 	};
@@ -55,6 +57,8 @@ export default async function prims(
 	// fill grid
 	for (let row = 0; row < grid.length; row++) {
 		for (let col = 0; col < grid[0].length; col++) {
+			if (grid[row][col].isStart || grid[row][col].isEnd) continue;
+
 			grid[row][col].isWall = true;
 			gridNodeRefs.current[grid[row][col].id].classList.add('wall-node');
 		}
