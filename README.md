@@ -37,3 +37,28 @@ This is a visualization tool designed to demonstrate the inner workings of vario
 - **Hunt And Kill** - Hunt and Kill maze generation begins with a random starting point. It explores the maze like a random walker until it gets stuck (has no unvisited neighbors). When stuck, it "hunts" for an unvisited cell by scanning the maze from top-left to bottom-right, and when it finds one, it connects the current position to that unvisited cell and continues walking randomly. The process repeats until there are no unvisited cells left, creating a maze with more organic and irregular paths.
 
 ## Gifs
+![mazegengif](https://github.com/TylerMommsen/pathfinding-visualizer/assets/65496518/8f9b3f81-e434-45e3-9950-d88d6a21fbd1)
+![viewalgorithmgif](https://github.com/TylerMommsen/pathfinding-visualizer/assets/65496518/f0eade3d-1dc6-4b04-8044-5b6ad6cd219a)
+
+## Development
+Follow these steps to run the project locally.
+1. Clone the repository.
+   
+  HTTPS
+  ```sh
+  git clone https://github.com/TylerMommsen/pathfinding-visualizer.git
+  ```
+  SSH
+  ```sh
+  git clone git@github.com:TylerMommsen/pathfinding-visualizer.git
+  ```
+
+2. Install dependenices
+  ```sh
+  npm install
+  ```
+
+3. Run the project
+  ```sh
+  npm run dev
+  ```
