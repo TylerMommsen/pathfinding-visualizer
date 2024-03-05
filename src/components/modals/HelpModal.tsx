@@ -122,7 +122,7 @@ const HelpModal = ({ onClose }: { onClose: () => void }) => {
 							src={'/tutorial/othercustomizationsgif.gif'}
 							width={800}
 							height={450}
-							alt="live pathfinding gif"
+							alt="view other customizations gif"
 						/>
 					</>
 				);
@@ -138,7 +138,7 @@ const HelpModal = ({ onClose }: { onClose: () => void }) => {
 							src={'/tutorial/viewalgorithmgif.gif'}
 							width={800}
 							height={450}
-							alt="live pathfinding gif"
+							alt="view live algorithm gif"
 						/>
 					</>
 				);
@@ -171,7 +171,7 @@ const HelpModal = ({ onClose }: { onClose: () => void }) => {
 							src={'/tutorial/resetgridgif.gif'}
 							width={800}
 							height={450}
-							alt="live pathfinding gif"
+							alt="reset grid gif"
 						/>
 					</>
 				);
