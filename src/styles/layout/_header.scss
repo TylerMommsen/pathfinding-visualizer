@@ -1,10 +1,10 @@
 #header {
-	display: grid;
-	grid-template-columns: auto 1fr auto;
-	gap: 3rem;
-	place-items: center;
-	padding-right: 3rem;
-	padding-left: 3rem;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	padding-top: 1rem;
+	gap: 0.2rem;
 	background-color: $tertiary;
 	color: $primary;
 
@@ -34,27 +34,36 @@
 			position: relative;
 			gap: 0.5rem;
 			flex-direction: row-reverse;
-			padding-top: 1rem;
-			padding-bottom: 1rem;
 			cursor: pointer;
+			height: 100%;
 
+			// if a menu is currently open, keep the underline styling
+			.currently-opened-menu {
+				text-decoration: underline;
+				text-decoration-thickness: 3px;
+				text-underline-offset: 18px;
+
+				text-decoration-color: $accent;
+			}
+
+			// show underline styling when hovering over a menu item
 			&:hover > .selection-item {
 				text-decoration: underline;
-				text-decoration-thickness: 4px;
-				text-underline-offset: 19px;
+				text-decoration-thickness: 3px;
+				text-underline-offset: 18px;
 
 				text-decoration-color: $accent;
 			}
 		}
 
-		#visualize-btn {
+		#start-btn {
 			font-weight: bold;
 			background-color: $accent;
 			height: 100%;
 			color: $primary;
 			border: none;
 			padding: 1rem 2rem 1rem 2rem;
-			font-size: 1.3rem;
+			font-size: 1.2rem;
 			cursor: pointer;
 
 			&:hover {
@@ -101,6 +110,8 @@
 	}
 
 	#help-btn {
+		position: absolute;
+		right: 3rem;
 		justify-self: end;
 		font-weight: bold;
 		cursor: pointer;
@@ -109,14 +120,13 @@
 		border: none;
 		font-size: 1rem;
 		text-align: start;
-		padding: 1rem;
 		white-space: nowrap;
 		cursor: pointer;
 
 		&:hover {
 			text-decoration: underline;
-			text-decoration-thickness: 4px;
-			text-underline-offset: 19px;
+			text-decoration-thickness: 3px;
+			text-underline-offset: 18px;
 
 			text-decoration-color: $accent;
 		}

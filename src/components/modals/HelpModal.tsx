@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import Image from 'next/image';
 
 const HelpModal = ({ onClose }: { onClose: () => void }) => {
 	const [page, setPage] = useState<number>(1);
@@ -30,10 +31,10 @@ const HelpModal = ({ onClose }: { onClose: () => void }) => {
 							free to click &apos;Skip&apos;.
 						</p>
 						<p>
-							Built by Tyler Mommsen with React, TypeScript and SCSS. If you would like to check out
-							the project on GitHub then click the link below! All information on the pathfinding
-							algorithms as well as the maze generation algorithms will have detailed desciptions in
-							the README section.
+							Built with React, TypeScript and SCSS. If you would like to check out the project on
+							GitHub then click the link below! All information on the pathfinding algorithms as
+							well as the maze generation algorithms will have detailed desciptions in the README
+							section.
 						</p>
 						<a
 							href="https://github.com/TylerMommsen/pathfinding-visualizer"
@@ -42,6 +43,12 @@ const HelpModal = ({ onClose }: { onClose: () => void }) => {
 						>
 							Go To Project Repo
 						</a>
+						<Image
+							src={'/tutorial/pathfindingdemogif.gif'}
+							width={600}
+							height={338}
+							alt="live pathfinding gif"
+						/>
 					</>
 				);
 			case 2:
@@ -51,6 +58,12 @@ const HelpModal = ({ onClose }: { onClose: () => void }) => {
 						<div style={{ width: '60ch' }}>
 							<p>Choose your desired algorithm from the dropdown menu.</p>
 						</div>
+						<Image
+							src={'/tutorial/selectalgorithmgif.gif'}
+							width={800}
+							height={450}
+							alt="select algorithm gif"
+						/>
 					</>
 				);
 			case 3:
@@ -60,6 +73,12 @@ const HelpModal = ({ onClose }: { onClose: () => void }) => {
 						<p>
 							Place walls down by holding down left click and remove them by holding right click.
 						</p>
+						<Image
+							src={'/tutorial/placewallsgif.gif'}
+							width={800}
+							height={450}
+							alt="placing and removing walls gif"
+						/>
 					</>
 				);
 			case 4:
@@ -67,6 +86,12 @@ const HelpModal = ({ onClose }: { onClose: () => void }) => {
 					<>
 						<h2>Generate a Maze/Pattern</h2>
 						<p>Select a Maze/Pattern from the dropdown menu and watch it generate in realtime!</p>
+						<Image
+							src={'/tutorial/mazegengif.gif'}
+							width={800}
+							height={450}
+							alt="generating maze gif"
+						/>
 					</>
 				);
 			case 5:
@@ -77,6 +102,12 @@ const HelpModal = ({ onClose }: { onClose: () => void }) => {
 							Click and drag the start and end node blocks to a suited position before starting the
 							algorithm!
 						</p>
+						<Image
+							src={'/tutorial/movestartendgif.gif'}
+							width={800}
+							height={450}
+							alt="move start or end nodes gif"
+						/>
 					</>
 				);
 			case 6:
@@ -87,6 +118,12 @@ const HelpModal = ({ onClose }: { onClose: () => void }) => {
 							View other customizations such as changing grid size, maze generation speed and
 							pathfinding speed.
 						</p>
+						<Image
+							src={'/tutorial/othercustomizationsgif.gif'}
+							width={800}
+							height={450}
+							alt="live pathfinding gif"
+						/>
 					</>
 				);
 			case 7:
@@ -97,6 +134,12 @@ const HelpModal = ({ onClose }: { onClose: () => void }) => {
 							Once you have selected all your desired customizations, you are ready to click start
 							and view the process!
 						</p>
+						<Image
+							src={'/tutorial/viewalgorithmgif.gif'}
+							width={800}
+							height={450}
+							alt="live pathfinding gif"
+						/>
 					</>
 				);
 			case 8:
@@ -107,6 +150,12 @@ const HelpModal = ({ onClose }: { onClose: () => void }) => {
 							Once the algorithm has finished running, you can drag the start or end blocks to
 							instantly view different paths.
 						</p>
+						<Image
+							src={'/tutorial/viewotherpathsgif.gif'}
+							width={800}
+							height={450}
+							alt="view other pathfinding paths gif"
+						/>
 					</>
 				);
 			case 9:
@@ -118,6 +167,12 @@ const HelpModal = ({ onClose }: { onClose: () => void }) => {
 							Paths&apos;. If you wan&apos;t the entire board to be cleared including walls, then
 							click &apos;Reset&apos;.
 						</p>
+						<Image
+							src={'/tutorial/resetgridgif.gif'}
+							width={800}
+							height={450}
+							alt="live pathfinding gif"
+						/>
 					</>
 				);
 			case 10:
@@ -135,6 +190,12 @@ const HelpModal = ({ onClose }: { onClose: () => void }) => {
 						>
 							Go To Project Repo
 						</a>
+						<Image
+							src={'/tutorial/pathfindingdemogif.gif'}
+							width={800}
+							height={450}
+							alt="live pathfinding gif"
+						/>
 					</>
 				);
 		}

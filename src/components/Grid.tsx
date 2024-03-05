@@ -60,10 +60,10 @@ const createGrid = (width: number, height: number) => {
 
 export default function Grid() {
 	const [gridState, setGridState] = useState({
-		grid: createGrid(81, 35),
-		width: 81,
-		height: 35,
-		nodeSize: '1.2vw',
+		grid: createGrid(85, 37),
+		width: 85,
+		height: 37,
+		nodeSize: '1.1vw',
 	});
 	const [startNodePos, setStartNodePos] = useState({
 		x: Math.floor(gridState.width / 2 - 10),
@@ -318,13 +318,13 @@ export default function Grid() {
 		let newWidth = 0;
 		let newHeight = 0;
 		if (selections.gridsize === 'Small') {
-			newWidth = 47;
+			newWidth = 49;
 			newHeight = 21;
-			newSize = '2vw';
+			newSize = '1.9vw';
 		} else if (selections.gridsize === 'Large') {
-			newWidth = 81;
-			newHeight = 35;
-			newSize = '1.2vw';
+			newWidth = 85;
+			newHeight = 37;
+			newSize = '1.1vw';
 		}
 
 		gridNodeRefs.current = {};
@@ -467,6 +467,7 @@ export default function Grid() {
 
 	// place or remove walls (left/right click)
 	const handleNodeClick = (row: number, col: number, clickType: number) => {
+		if (mazeGenerating || algorithmRunning) return;
 		if (gridState.grid[row][col].isStart || gridState.grid[row][col].isEnd) return;
 
 		const nodeRef = gridNodeRefs.current[gridState.grid[row][col].id];

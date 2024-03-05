@@ -1,5 +1,5 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useSelections } from '@/contexts/SelectionsContext';
 
 type SelectionContentsType = {
@@ -29,6 +29,8 @@ type SelectionName = keyof SelectionContentsType;
 
 export default function Selections() {
 	const [visibleDropdown, setVisibleDropdown] = useState<string | null>(null);
+	const dropdownRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
+
 	const {
 		selections,
 		setSelections,
@@ -43,6 +45,27 @@ export default function Selections() {
 		setVisibleDropdown(visibleDropdown === selection ? null : selection);
 	};
 
+	// close dropdown when user clicks elsewhere
+	useEffect(() => {
+		const handleClickOutside = (event: MouseEvent) => {
+			let shouldCloseDropdown = true;
+			Object.values(dropdownRefs.current).forEach((ref) => {
+				if (ref && ref.contains(event.target as Node)) {
+					shouldCloseDropdown = false;
+				}
+			});
+			if (shouldCloseDropdown) {
+				setVisibleDropdown(null);
+			}
+		};
+
+		document.addEventListener('mousedown', handleClickOutside);
+		return () => {
+			document.removeEventListener('mousedown', handleClickOutside);
+		};
+	}, []);
+
+	// update selection
 	const updateSelectionsContext = (selectionName: string, selection: string) => {
 		if (mazeGenerating || algorithmRunning) return;
 		// Convert selection name to state key format
@@ -75,9 +98,19 @@ export default function Selections() {
 	return (
 		<div id="selections">
 			{Object.keys(selectionContents).map((selection, index) => (
-				<div key={index} onClick={() => toggleDropdown(selection)}>
+				<div
+					key={index}
+					ref={(el) => (dropdownRefs.current[selection] = el)}
+					onClick={() => toggleDropdown(selection)}
+				>
 					<span className="down-arrow">&#9660;</span>
-					<button className="selection-item">{selection}</button>
+					<button
+						className={`selection-item ${
+							visibleDropdown === selection ? 'currently-opened-menu' : 'null'
+						}`}
+					>
+						{selection}
+					</button>
 					{visibleDropdown === selection && (
 						<DropdownContent selectionName={selection as SelectionName} />
 					)}
@@ -101,7 +134,7 @@ export default function Selections() {
 			</div>
 
 			<button
-				id="visualize-btn"
+				id="start-btn"
 				onClick={() => {
 					if (!algorithmRunning && !mazeGenerating && selections.selectalgorithm) setStart(true);
 				}}
