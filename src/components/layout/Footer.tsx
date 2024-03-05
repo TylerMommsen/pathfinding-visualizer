@@ -10,7 +10,13 @@ export default function Footer() {
 				target="_blank"
 				rel="noreferrer noopener"
 			>
-				<Image src={'/github-icon.svg'} width={16} height={16} alt={'footer github icon'} />
+				<Image
+					src={'/github-icon.svg'}
+					className="github-icon"
+					width={16}
+					height={16}
+					alt={'footer github icon'}
+				/>
 			</a>
 		</footer>
 	);

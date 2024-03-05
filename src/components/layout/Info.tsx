@@ -82,15 +82,27 @@ export default function Info() {
 				</div>
 
 				<div className="node-info-item">
-					<Image src="/left-click-icon.svg" width={20} height={20} alt="left click icon" />
+					<Image
+						src="/left-click-icon.svg"
+						className="info-img"
+						width={20}
+						height={20}
+						alt="left click icon"
+					/>
 					Place Wall
 				</div>
 				<div className="node-info-item">
-					<Image src="/right-click-icon.svg" width={20} height={20} alt="left click icon" />
+					<Image
+						src="/right-click-icon.svg"
+						className="info-img"
+						width={20}
+						height={20}
+						alt="left click icon"
+					/>
 					Remove Wall
 				</div>
 			</div>
-			<p>
+			<p className="algorithm-selected">
 				Algorithm Selected:{' '}
 				<span style={{ fontWeight: 'bold' }}>
 					{selections.selectalgorithm ? selections.selectalgorithm : 'None'}

@@ -7,4 +7,14 @@
 	background-color: $tertiary;
 	color: $primary;
 	font-size: 0.7rem;
+
+	@media only screen and (max-width: 1400px) {
+		font-size: 0.5rem;
+		padding: 0.4rem;
+
+		.github-icon {
+			width: 12px;
+			height: 12px;
+		}
+	}
 }

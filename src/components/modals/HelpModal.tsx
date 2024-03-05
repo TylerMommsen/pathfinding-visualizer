@@ -45,6 +45,7 @@ const HelpModal = ({ onClose }: { onClose: () => void }) => {
 						</a>
 						<Image
 							src={'/tutorial/pathfindingdemogif.gif'}
+							className="tutorial-gif"
 							width={600}
 							height={338}
 							alt="live pathfinding gif"
@@ -55,11 +56,12 @@ const HelpModal = ({ onClose }: { onClose: () => void }) => {
 				return (
 					<>
 						<h2>Select a Pathfinding Algorithm</h2>
-						<div style={{ width: '60ch' }}>
+						<div style={{ width: '60ch', display: 'grid', placeItems: 'center' }}>
 							<p>Choose your desired algorithm from the dropdown menu.</p>
 						</div>
 						<Image
 							src={'/tutorial/selectalgorithmgif.gif'}
+							className="tutorial-gif"
 							width={800}
 							height={450}
 							alt="select algorithm gif"
@@ -75,6 +77,7 @@ const HelpModal = ({ onClose }: { onClose: () => void }) => {
 						</p>
 						<Image
 							src={'/tutorial/placewallsgif.gif'}
+							className="tutorial-gif"
 							width={800}
 							height={450}
 							alt="placing and removing walls gif"
@@ -88,6 +91,7 @@ const HelpModal = ({ onClose }: { onClose: () => void }) => {
 						<p>Select a Maze/Pattern from the dropdown menu and watch it generate in realtime!</p>
 						<Image
 							src={'/tutorial/mazegengif.gif'}
+							className="tutorial-gif"
 							width={800}
 							height={450}
 							alt="generating maze gif"
@@ -104,6 +108,7 @@ const HelpModal = ({ onClose }: { onClose: () => void }) => {
 						</p>
 						<Image
 							src={'/tutorial/movestartendgif.gif'}
+							className="tutorial-gif"
 							width={800}
 							height={450}
 							alt="move start or end nodes gif"
@@ -120,6 +125,7 @@ const HelpModal = ({ onClose }: { onClose: () => void }) => {
 						</p>
 						<Image
 							src={'/tutorial/othercustomizationsgif.gif'}
+							className="tutorial-gif"
 							width={800}
 							height={450}
 							alt="view other customizations gif"
@@ -136,6 +142,7 @@ const HelpModal = ({ onClose }: { onClose: () => void }) => {
 						</p>
 						<Image
 							src={'/tutorial/viewalgorithmgif.gif'}
+							className="tutorial-gif"
 							width={800}
 							height={450}
 							alt="view live algorithm gif"
@@ -152,6 +159,7 @@ const HelpModal = ({ onClose }: { onClose: () => void }) => {
 						</p>
 						<Image
 							src={'/tutorial/viewotherpathsgif.gif'}
+							className="tutorial-gif"
 							width={800}
 							height={450}
 							alt="view other pathfinding paths gif"
@@ -169,6 +177,7 @@ const HelpModal = ({ onClose }: { onClose: () => void }) => {
 						</p>
 						<Image
 							src={'/tutorial/resetgridgif.gif'}
+							className="tutorial-gif"
 							width={800}
 							height={450}
 							alt="reset grid gif"
@@ -192,6 +201,7 @@ const HelpModal = ({ onClose }: { onClose: () => void }) => {
 						</a>
 						<Image
 							src={'/tutorial/pathfindingdemogif.gif'}
+							className="tutorial-gif"
 							width={800}
 							height={450}
 							alt="live pathfinding gif"

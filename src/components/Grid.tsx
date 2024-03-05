@@ -60,9 +60,9 @@ const createGrid = (width: number, height: number) => {
 
 export default function Grid() {
 	const [gridState, setGridState] = useState({
-		grid: createGrid(85, 37),
+		grid: createGrid(85, 35),
 		width: 85,
-		height: 37,
+		height: 35,
 		nodeSize: '1.1vw',
 	});
 	const [startNodePos, setStartNodePos] = useState({
@@ -319,11 +319,11 @@ export default function Grid() {
 		let newHeight = 0;
 		if (selections.gridsize === 'Small') {
 			newWidth = 49;
-			newHeight = 21;
+			newHeight = 19;
 			newSize = '1.9vw';
 		} else if (selections.gridsize === 'Large') {
 			newWidth = 85;
-			newHeight = 37;
+			newHeight = 35;
 			newSize = '1.1vw';
 		}
 

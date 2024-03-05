@@ -8,11 +8,20 @@
 	background-color: $tertiary;
 	color: $primary;
 
+	@media only screen and (max-width: 1400px) {
+		gap: 0.2rem;
+		padding-top: 0.8rem;
+	}
+
 	#selections {
 		display: flex;
 		align-items: center;
 		gap: 3rem;
 		height: 100%;
+
+		@media only screen and (max-width: 1400px) {
+			gap: 2rem;
+		}
 
 		.selection-item {
 			background-color: transparent;
@@ -21,11 +30,19 @@
 			font-size: 1rem;
 			font-weight: bold;
 			cursor: pointer;
+
+			@media only screen and (max-width: 1400px) {
+				font-size: 0.8rem;
+			}
 		}
 
 		.down-arrow {
 			color: rgba($color: #fff, $alpha: 0.3);
 			cursor: pointer;
+
+			@media only screen and (max-width: 1400px) {
+				font-size: 0.8rem;
+			}
 		}
 
 		& > div {
@@ -44,6 +61,11 @@
 				text-underline-offset: 18px;
 
 				text-decoration-color: $accent;
+
+				@media only screen and (max-width: 1400px) {
+					text-underline-offset: 13px;
+					text-decoration-thickness: 2px;
+				}
 			}
 
 			// show underline styling when hovering over a menu item
@@ -53,6 +75,11 @@
 				text-underline-offset: 18px;
 
 				text-decoration-color: $accent;
+
+				@media only screen and (max-width: 1400px) {
+					text-underline-offset: 13px;
+					text-decoration-thickness: 2px;
+				}
 			}
 		}
 
@@ -69,6 +96,11 @@
 			&:hover {
 				opacity: 0.9;
 			}
+
+			@media only screen and (max-width: 1400px) {
+				font-size: 1rem;
+				padding: 0.6rem 1.6rem 0.6rem 1.6rem;
+			}
 		}
 
 		.drop-down-content {
@@ -81,6 +113,10 @@
 			left: 0;
 			width: auto;
 			min-width: 100%;
+
+			@media only screen and (max-width: 1400px) {
+				top: 3rem;
+			}
 
 			& > button {
 				background-color: transparent;
@@ -96,6 +132,11 @@
 				&:hover {
 					background-color: $accent;
 				}
+
+				@media only screen and (max-width: 1400px) {
+					padding: 0.8rem;
+					font-size: 0.8rem;
+				}
 			}
 
 			.currently-selected {
@@ -107,6 +148,10 @@
 	h1 {
 		color: $primary;
 		font-size: 1.4rem;
+
+		@media only screen and (max-width: 1400px) {
+			font-size: 1rem;
+		}
 	}
 
 	#help-btn {
@@ -129,6 +174,15 @@
 			text-underline-offset: 18px;
 
 			text-decoration-color: $accent;
+
+			@media only screen and (max-width: 1400px) {
+				text-underline-offset: 13px;
+				text-decoration-thickness: 2px;
+			}
+		}
+
+		@media only screen and (max-width: 1400px) {
+			font-size: 0.8rem;
 		}
 	}
 }
