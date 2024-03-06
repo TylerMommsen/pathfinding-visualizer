@@ -20,20 +20,25 @@
 		border-radius: 1rem;
 		padding: 2rem;
 		background-color: $primary;
-		min-height: 70%;
-		min-width: 40%;
+		min-height: 80%;
+		min-width: 50%;
 		word-wrap: break-word;
 		overflow-wrap: break-word;
 		white-space: normal;
 
 		h2 {
-			font-size: 1.6rem;
+			font-size: 2rem;
 		}
 
 		p {
-			max-width: 60ch;
+			max-width: 70ch;
 			text-align: center;
 			font-size: 1.2rem;
+		}
+
+		.tutorial-gif {
+			width: 100%;
+			height: auto;
 		}
 
 		.page-counter {
@@ -58,6 +63,10 @@
 			}
 			a {
 				font-size: 0.8rem;
+			}
+
+			.tutorial-gif {
+				// width: 70%;
 			}
 		}
 
@@ -85,10 +94,12 @@
 				color: $primary;
 				padding: 0.5rem 1rem 0.5rem 1rem;
 				border-radius: 0.5rem;
+				font-size: 1.2rem;
 				cursor: pointer;
 
 				@media only screen and (max-width: 1400px) {
 					font-size: 0.8rem;
+					padding: 0.4rem 0.8rem 0.4rem 0.8rem;
 				}
 
 				&:hover {
