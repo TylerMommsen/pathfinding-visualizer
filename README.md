@@ -42,15 +42,14 @@ This is a visualization tool designed to demonstrate the inner workings of vario
 
 ## Development
 Follow these steps to run the project locally.
-1. Clone the repository.
-   
-  HTTPS
+1. Clone the repository (HTTPS).
   ```sh
   git clone https://github.com/TylerMommsen/pathfinding-visualizer.git
   ```
-  SSH
+
+2. Navigate to directory
   ```sh
-  git clone git@github.com:TylerMommsen/pathfinding-visualizer.git
+  cd pathfinding-visualizer
   ```
 
 2. Install dependenices
